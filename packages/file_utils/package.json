@@ -1,0 +1,20 @@
+{
+  "name": "@repo/file_utils",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.ts",
+  "scripts": {
+    "build": "esbuild src/index.ts --platform=node --bundle --outdir=dist"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "esbuild": "^0.23.0",
+    "fs": "^0.0.1-security"
+  },
+  "devDependencies": {
+    "@repo/types": "*",
+    "@repo/typescript-config": "*"
+  }
+}
