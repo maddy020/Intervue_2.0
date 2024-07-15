@@ -1,6 +1,7 @@
 import { Server, Socket } from "socket.io";
 import { TerminalManager } from "./pty";
-import { fetchDir } from "@repo/file_utils";
+import { saveToS3 } from "@repo/aws_utils";
+import { fetchDir, saveFile, fetchFileContent } from "@repo/file_utils";
 
 export async function initWs(httpServer: any) {
   const io = new Server(httpServer, {
@@ -35,6 +36,29 @@ async function initHandler(socket: Socket, replId: string) {
     });
   });
 
+  socket.on("fetchDir", async (dir: string, callback) => {
+    const dirPath = `/workspace/${dir}`;
+    const contents = await fetchDir(dirPath, dir);
+    callback(contents);
+  });
+
+  socket.on(
+    "fetchContent",
+    async ({ path: filePath }: { path: string }, callback) => {
+      const fullPath = `/workspace/${filePath}`;
+      const data = await fetchFileContent(fullPath);
+      callback(data);
+    }
+  );
+
+  socket.on(
+    "updateContent",
+    async ({ path: filePath, content }: { path: string; content: string }) => {
+      const fullPath = `/workspace/${filePath}`;
+      await saveFile(fullPath, content);
+      await saveToS3(`code/${replId}`, filePath, content);
+    }
+  );
   socket.on(
     "terminalData",
     async ({ data }: { data: string; terminalId: number }) => {

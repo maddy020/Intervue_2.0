@@ -1,36 +1,10 @@
-enum FileType {
-  FILE,
-  DIRECTORY,
-  DUMMY,
-}
-
-interface CommonProps {
-  id: string;
-  name: string;
-  type: FileType;
-  depth: number;
-  content?: string;
-  path: string;
-  parentId: string | undefined;
-}
-
-interface File extends CommonProps {}
-
-interface RemoteFile {
-  type: "file" | "dir";
-  name: string;
-  path: string;
-}
-
-interface Directory extends CommonProps {
-  dirs: Directory[];
-  files: File[];
-}
+import { FileType, File, RemoteFile, Directory } from "@repo/types";
 
 export function buildTree(data: RemoteFile[]): Directory {
   const dirs = data.filter((item) => item.type === "dir");
   const files = data.filter((item) => item.type === "file");
   const cache = new Map<string, Directory | File>();
+
   const rootDir: Directory = {
     id: "root",
     name: "root",

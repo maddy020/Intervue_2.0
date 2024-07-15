@@ -25,6 +25,11 @@ spec:
             - >
               aws s3 cp s3://madhav.dev.intervue/code/service_name /workspace/ --recursive &&
               echo "Resources copied from S3";
+           env:
+            - name: AWS_ACCESS_KEY_ID
+              value: "AKIAXYKJQWSEZNY6XHZX"
+            - name: AWS_SECRET_ACCESS_KEY
+              value: "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"    
           volumeMounts:
             - name: workspace-volume
               mountPath: /workspace

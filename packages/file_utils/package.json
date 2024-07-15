@@ -2,10 +2,8 @@
   "name": "@repo/file_utils",
   "version": "1.0.0",
   "description": "",
-  "main": "index.ts",
-  "scripts": {
-    "build": "esbuild src/index.ts --platform=node --bundle --outdir=dist"
-  },
+  "main": "./src/index.ts",
+  "file_utils": "/src/index.ts",
   "keywords": [],
   "author": "",
   "license": "ISC",

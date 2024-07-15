@@ -4,7 +4,8 @@ import axios from "axios";
 import { Socket, io } from "socket.io-client";
 import { useSearchParams } from "react-router-dom";
 import Editor from "./Editor";
-import { RemoteFile } from "@repo/types";
+import Output from "./Output";
+import { FileType, File, RemoteFile } from "@repo/types";
 
 function useSocket() {
   const [socket, setSocket] = useState<Socket | null>(null);
@@ -43,23 +44,51 @@ export const CodingPage = () => {
 export const CodingComp = () => {
   const socket = useSocket();
   const [loaded, setLoaded] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | undefined>(undefined);
   const [fileStructure, setFileStructure] = useState<RemoteFile[]>([]);
   useEffect(() => {
     if (socket) {
       socket.on("loaded", ({ rootContent }: { rootContent: RemoteFile[] }) => {
         setLoaded(true);
-        console.log("code ki maa ka bhosda");
-        console.log(rootContent);
         setFileStructure(rootContent);
       });
     }
   }, [socket]);
+  const onSelect = (file: File) => {
+    if (file.type === FileType.DIRECTORY) {
+      socket?.emit("fetchDir", file.path, (data: RemoteFile[]) => {
+        setFileStructure((prev) => {
+          const allFiles = [...prev, ...data];
+          return allFiles.filter(
+            (file, index, self) =>
+              index === self.findIndex((f) => f.path === file.path)
+          );
+        });
+      });
+    } else {
+      socket?.emit("fetchContent", { path: file.path }, (data: string) => {
+        file.content = data;
+        setSelectedFile(file);
+      });
+    }
+  };
+  if (!loaded) {
+    return <div className="bg-slate-600">loading...</div>;
+  }
   return (
-    <>
-      <div>
-        <Editor socket={socket} />
-        <Terminal socket={socket} />
+    <div className="flex text-lg w-full">
+      <div className="w-[60%] flex">
+        <Editor
+          socket={socket}
+          onSelect={onSelect}
+          selectedFile={selectedFile}
+          files={fileStructure}
+        />
+        <div className="flex flex-col w-[40%]">
+          <Output />
+          <Terminal socket={socket} />
+        </div>
       </div>
-    </>
+    </div>
   );
 };
