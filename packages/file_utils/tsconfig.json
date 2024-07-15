@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES2020",
-    "module": "NodeNext",
+    "module": "ES6",
     "strict": true,
     "declaration": true,
     "outDir": "./dist",
