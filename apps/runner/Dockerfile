@@ -13,7 +13,6 @@ COPY package.json ./
 # Set the PYTHON environment variable
 ENV PYTHON=/usr/bin/python3
 
-
 # Install dependencies, including TypeScript
 RUN npm install typescript --save-dev
 
