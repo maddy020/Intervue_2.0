@@ -32,6 +32,7 @@ export function buildTree(data: RemoteFile[]): Directory {
       dirs: [],
       files: [],
     };
+    rootDir.dirs.push(dir);
     cache.set(dir.id, dir);
   });
 
@@ -49,6 +50,7 @@ export function buildTree(data: RemoteFile[]): Directory {
       type: FileType.FILE,
       depth: 0,
     };
+    rootDir.files.push(file);
     cache.set(file.id, file);
   });
 

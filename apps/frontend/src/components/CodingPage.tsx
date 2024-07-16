@@ -72,9 +72,9 @@ export const CodingComp = () => {
       });
     }
   };
-  // if (!loaded) {
-  //   return <div className="bg-slate-600">loading...</div>;
-  // }
+  if (!loaded) {
+    return <div className="bg-slate-600">loading...</div>;
+  }
   return (
     <div className="flex text-lg w-full">
       <div className="w-[60%] flex">
