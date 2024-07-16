@@ -1,7 +1,7 @@
 import { Server, Socket } from "socket.io";
 import { TerminalManager } from "./pty";
-import { saveToS3 } from "@repo/aws_utils";
-import { fetchDir, saveFile, fetchFileContent } from "@repo/file_utils";
+import { saveToS3 } from "./aws";
+import { fetchDir, saveFile, fetchFileContent } from "./file";
 
 export async function initWs(httpServer: any) {
   const io = new Server(httpServer, {

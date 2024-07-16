@@ -2,15 +2,11 @@
   "name": "runner",
   "version": "1.0.0",
   "main": "index.js",
-  "scripts": {
-    "dev":"tsc -b && node dist/index.js"
-  },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@repo/aws_utils": "file:./aws_utils/index.ts",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "cors": "^2.8.5",

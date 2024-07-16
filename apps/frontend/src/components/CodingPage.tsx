@@ -10,7 +10,7 @@ import { FileType, File, RemoteFile } from "@repo/types";
 function useSocket() {
   const [socket, setSocket] = useState<Socket | null>(null);
   useEffect(() => {
-    const newSocket = io("ws://212.2.247.138:30080");
+    const newSocket = io("ws://212.2.243.53:30080");
     setSocket(newSocket);
     return () => {
       newSocket.disconnect();
@@ -72,9 +72,9 @@ export const CodingComp = () => {
       });
     }
   };
-  if (!loaded) {
-    return <div className="bg-slate-600">loading...</div>;
-  }
+  // if (!loaded) {
+  //   return <div className="bg-slate-600">loading...</div>;
+  // }
   return (
     <div className="flex text-lg w-full">
       <div className="w-[60%] flex">
