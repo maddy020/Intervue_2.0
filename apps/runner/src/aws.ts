@@ -53,6 +53,6 @@ export const saveToS3 = async (
     Key: `${key}${filePath}`,
     Body: content,
   };
-
+  console.log("Received params", params);
   await s3.putObject(params).promise();
 };

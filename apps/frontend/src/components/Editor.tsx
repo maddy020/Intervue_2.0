@@ -26,17 +26,15 @@ const Editor = ({
     }
   }, [selectedFile]);
   return (
-    <div>
-      <div className="flex">
-        <Sidebar>
-          <FileTree
-            rootDir={rootDir}
-            selectedFile={selectedFile}
-            onSelect={onSelect}
-          />
-        </Sidebar>
-        <Code socket={socket} selectedFile={selectedFile} />
-      </div>
+    <div className="flex gap-4">
+      <Sidebar>
+        <FileTree
+          rootDir={rootDir}
+          selectedFile={selectedFile}
+          onSelect={onSelect}
+        />
+      </Sidebar>
+      <Code socket={socket} selectedFile={selectedFile} />
     </div>
   );
 };

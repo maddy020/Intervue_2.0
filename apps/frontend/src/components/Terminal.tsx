@@ -50,12 +50,11 @@ const TerminalComponent = ({ socket }: { socket: Socket | null }) => {
   return (
     <div
       style={{
-        width: "80vw", // Adjust width as needed
-        height: "80vh", // Adjust height as needed
+        width: "40vw", // Adjust width as needed
+        height: "50vh", // Adjust height as needed
         textAlign: "left",
         fontFamily: "monospace",
-        fontSize: "14px",
-        overflow: "auto",
+        fontSize: "30px",
         padding: "10px",
       }}
       ref={terminalRef}

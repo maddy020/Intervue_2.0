@@ -1,5 +1,5 @@
 const Output = () => {
-  return <div>Output</div>;
+  return <div className="pl-2">Output</div>;
 };
 
 export default Output;

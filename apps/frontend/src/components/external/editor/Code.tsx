@@ -1,6 +1,7 @@
 import { Socket } from "socket.io-client";
-import { Editor, OnChange } from "@monaco-editor/react";
+import { Editor } from "@monaco-editor/react";
 import { File } from "@repo/types";
+import { editor as monacoEditor } from "monaco-editor";
 const Code = ({
   socket,
   selectedFile,
@@ -26,7 +27,14 @@ const Code = ({
       }, wait);
     };
   }
-  const handleChange: OnChange = (value) => {
+  const handleChange = (
+    value: string | undefined,
+    event: monacoEditor.IModelContentChangedEvent
+  ) => {
+    console.log("value", value);
+    console.log("event", event);
+    console.log("selectedFile", selectedFile?.path);
+
     if (value !== undefined) {
       debounce((value) => {
         socket?.emit("updateContent", {
@@ -40,6 +48,7 @@ const Code = ({
   return (
     <>
       <Editor
+        width="50vw"
         height="100vh"
         language={language}
         theme="vs-dark"

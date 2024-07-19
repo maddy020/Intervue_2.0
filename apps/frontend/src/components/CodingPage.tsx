@@ -10,7 +10,7 @@ import { FileType, File, RemoteFile } from "@repo/types";
 function useSocket() {
   const [socket, setSocket] = useState<Socket | null>(null);
   useEffect(() => {
-    const newSocket = io("ws://212.2.243.53:30080");
+    const newSocket = io("ws://212.2.241.206:30080");
     setSocket(newSocket);
     return () => {
       newSocket.disconnect();
@@ -76,15 +76,15 @@ export const CodingComp = () => {
     return <div className="bg-slate-600">loading...</div>;
   }
   return (
-    <div className="flex text-lg w-full">
-      <div className="w-[60%] flex">
+    <div className="flex text-lg">
+      <div className="flex">
         <Editor
           socket={socket}
           onSelect={onSelect}
           selectedFile={selectedFile}
           files={fileStructure}
         />
-        <div className="flex flex-col w-[40%]">
+        <div className="flex flex-col ">
           <Output />
           <Terminal socket={socket} />
         </div>

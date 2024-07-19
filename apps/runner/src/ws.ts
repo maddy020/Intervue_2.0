@@ -54,9 +54,14 @@ async function initHandler(socket: Socket, replId: string) {
   socket.on(
     "updateContent",
     async ({ path: filePath, content }: { path: string; content: string }) => {
-      const fullPath = `/workspace/${filePath}`;
-      await saveFile(fullPath, content);
-      await saveToS3(`code/${replId}`, filePath, content);
+      try {
+        const fullPath = `/workspace/${filePath}`;
+        console.log("content received", content);
+        await saveFile(fullPath, content);
+        await saveToS3(`code/${replId}`, filePath, content);
+      } catch (error) {
+        console.log(error);
+      }
     }
   );
   socket.on(
