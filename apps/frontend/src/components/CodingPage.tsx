@@ -10,7 +10,8 @@ import { FileType, File, RemoteFile } from "@repo/types";
 function useSocket() {
   const [socket, setSocket] = useState<Socket | null>(null);
   useEffect(() => {
-    const newSocket = io("ws://212.2.241.206:30080");
+    const replId = localStorage.getItem("replId");
+    const newSocket = io(`ws://${replId}.madhav.devilclub.tech:30080`);
     setSocket(newSocket);
     return () => {
       newSocket.disconnect();

@@ -56,7 +56,6 @@ async function initHandler(socket: Socket, replId: string) {
     async ({ path: filePath, content }: { path: string; content: string }) => {
       try {
         const fullPath = `/workspace/${filePath}`;
-        console.log("content received", content);
         await saveFile(fullPath, content);
         await saveToS3(`code/${replId}`, filePath, content);
       } catch (error) {
@@ -67,6 +66,7 @@ async function initHandler(socket: Socket, replId: string) {
   socket.on(
     "terminalData",
     async ({ data }: { data: string; terminalId: number }) => {
+      console.log(data);
       terminalManager.write(socket.id, data);
     }
   );

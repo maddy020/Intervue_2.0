@@ -49,10 +49,11 @@ export const saveToS3 = async (
   content: string
 ): Promise<void> => {
   const params = {
-    Bucket: process.env.S3_BUCKET ?? "",
+    Bucket: "madhav.dev.intervue",
     Key: `${key}${filePath}`,
     Body: content,
   };
-  console.log("Received params", params);
+  console.log("key", key);
+  console.log("filePath", filePath);
   await s3.putObject(params).promise();
 };
