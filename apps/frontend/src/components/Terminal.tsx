@@ -19,7 +19,6 @@ function ab2str(buf: ArrayBuffer) {
 
 const TerminalComponent = ({ socket }: { socket: Socket | null }) => {
   const terminalRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     if (!terminalRef.current || !socket) return;
 
@@ -38,7 +37,23 @@ const TerminalComponent = ({ socket }: { socket: Socket | null }) => {
     socket.on("terminal", handler);
 
     term.onData((data) => {
-      socket.emit("terminalData", { data });
+      switch (data) {
+        case "\r":
+          socket.emit("terminalData", { data: "\n" });
+          break;
+        case "\x7F":
+          socket.emit("terminalData", { data: "\b" });
+          break;
+        case "\x1B[D": // Left arrow key
+          socket.emit("terminalData", { data: "\x1B[D" });
+          break;
+        case "\x1B[C": // Right arrow key
+          socket.emit("terminalData", { data: "\x1B[C" });
+          break;
+        default:
+          socket.emit("terminalData", { data });
+          break;
+      }
     });
 
     return () => {

@@ -27,7 +27,8 @@ export async function initWs(httpServer: any) {
 
 async function initHandler(socket: Socket, replId: string) {
   const terminalManager = new TerminalManager();
-
+  let commandBuffer = "";
+  let count = 0;
   socket.on("requestTerminal", async () => {
     terminalManager.createPty(socket.id, replId, (data, id) => {
       socket.emit("terminal", {
@@ -63,11 +64,41 @@ async function initHandler(socket: Socket, replId: string) {
       }
     }
   );
-  socket.on(
-    "terminalData",
-    async ({ data }: { data: string; terminalId: number }) => {
-      console.log(data);
-      terminalManager.write(socket.id, data);
+
+  socket.on("terminalData", async ({ data }: { data: string }) => {
+    commandBuffer += data;
+    console.log("data received", commandBuffer);
+    if (commandBuffer.includes("\x1B[D")) {
+      count++;
+      console.log("Left Key Pressed");
+    } else if (commandBuffer.includes("\x1B[C")) {
+      count--;
+      if (count < 0) count = 0;
+      console.log("Right Key Pressed");
+    } else if (commandBuffer.includes("\b")) {
+      console.log("inside the backspace");
+      const n = commandBuffer.length;
+      commandBuffer =
+        commandBuffer.slice(0, n - count) + commandBuffer.slice(n - count + 1);
+    } else if (commandBuffer.includes("\n")) {
+      count = 0;
+      const commands = commandBuffer.split("\n");
+      commandBuffer = commands.pop() || ""; // Retain any incomplete command
+
+      for (let command of commands) {
+        command = command.trim();
+        console.log("Received command:", command);
+
+        if (command.startsWith("mkdir")) {
+          console.log("Processing mkdir command:", command);
+          // Add mkdir logic here
+        } else if (command.startsWith("touch")) {
+          console.log("Processing touch command:", command);
+          // Add touch logic here
+        }
+      }
     }
-  );
+
+    terminalManager.write(socket.id, data);
+  });
 }

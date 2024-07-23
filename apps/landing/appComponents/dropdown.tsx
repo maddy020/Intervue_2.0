@@ -40,6 +40,10 @@ const frameworks = [
     value: "astro",
     label: "Astro",
   },
+  {
+    value: "nodejs",
+    label: "Nodejs",
+  },
 ];
 
 export function ComboboxDemo({

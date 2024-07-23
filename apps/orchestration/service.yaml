@@ -38,6 +38,7 @@ spec:
           image: maddy020/runner:latest
           ports:
             - containerPort: 3005
+            - containerPort: 3006
           volumeMounts:
             - name: workspace-volume
               mountPath: /workspace
@@ -55,33 +56,45 @@ spec:
       name: ws
       port: 3005
       targetPort: 3005
-      nodePort: 30080
-  type: NodePort
-# ---
-# apiVersion: networking.k8s.io/v1
-# kind: Ingress
-# metadata:
-#   name: service_name
-# spec:
-#   ingressClassName: nginx
-#   rules:
-#     - host: http://localhost:4002
-#       http:
-#         paths:
-#           - path: /
-#             pathType: Prefix
-#             backend:
-#               service:
-#                 name: service_name
-#                 port:
-#                   number: 300
-#     - host: http://localhost:4001
-#       http:
-#         paths:
-#           - path: /
-#             pathType: Prefix
-#             backend:
-#               service:
-#                 name: service_name
-#                 port:
-#                   number: 3000
+    - protocol: TCP
+      name: user
+      port: 3006
+      targetPort: 3006
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: service_name
+  namespace: default
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+    nginx.ingress.kubernetes.io/websocket-services: "service_name"
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
+    nginx.ingress.kubernetes.io/cors-allow-methods: "GET, POST, OPTIONS"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "Content-Type, Authorization"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: service_name.madhav.devilclub.tech
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: service_name
+                port:
+                  number: 3005
+    - host: service_name.interview.rishavrtwt.tech
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: service_name
+                port:
+                  number: 3006

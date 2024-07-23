@@ -11,7 +11,7 @@ function useSocket() {
   const [socket, setSocket] = useState<Socket | null>(null);
   useEffect(() => {
     const replId = localStorage.getItem("replId");
-    const newSocket = io(`ws://${replId}.madhav.devilclub.tech:30080`);
+    const newSocket = io(`ws://${replId}.madhav.devilclub.tech`);
     setSocket(newSocket);
     return () => {
       newSocket.disconnect();
