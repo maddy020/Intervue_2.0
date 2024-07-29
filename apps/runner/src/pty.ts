@@ -18,7 +18,7 @@ export class TerminalManager {
     const term = spawn(SHELL, [], {
       cols: 200,
       name: "xterm",
-      cwd: `/`,
+      cwd: `/workspace`,
     });
 
     term.onData((data: string) => onData(data, term.pid));
