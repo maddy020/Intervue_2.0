@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Terminal from "./Terminal";
 import axios from "axios";
 import { Socket, io } from "socket.io-client";
@@ -6,6 +6,8 @@ import { useSearchParams } from "react-router-dom";
 import Editor from "./Editor";
 import Output from "./Output";
 import { FileType, File, RemoteFile } from "@repo/types";
+import Interview from "./Interview";
+import Draggable from "react-draggable";
 
 function useSocket() {
   const [socket, setSocket] = useState<Socket | null>(null);
@@ -25,6 +27,8 @@ export const CodingPage = () => {
   const [podCreated, setPodCreated] = useState(isPodCreated);
   const [searchParams] = useSearchParams();
   const replId = searchParams.get("replId") ?? "";
+  const token = searchParams.get("token") ?? "";
+  console.log(token);
   useEffect(() => {
     if (replId && !isPodCreated) {
       axios
@@ -39,14 +43,24 @@ export const CodingPage = () => {
   if (!podCreated) {
     return <>Booting....</>;
   }
-  return <CodingComp />;
+  return <CodingComp token={token} />;
 };
 
-export const CodingComp = () => {
+export const CodingComp = ({ token }: { token: string }) => {
   const socket = useSocket();
   const [loaded, setLoaded] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | undefined>(undefined);
   const [fileStructure, setFileStructure] = useState<RemoteFile[]>([]);
+  const isDraggingRef = useRef(false);
+
+  const onDrag = () => {
+    isDraggingRef.current = true;
+  };
+
+  const onStop = () => {
+    isDraggingRef.current = false;
+  };
+
   useEffect(() => {
     if (socket) {
       socket.on("loaded", ({ rootContent }: { rootContent: RemoteFile[] }) => {
@@ -77,19 +91,29 @@ export const CodingComp = () => {
     return <div className="bg-slate-600">loading...</div>;
   }
   return (
-    <div className="flex text-lg">
-      <div className="flex">
-        <Editor
-          socket={socket}
-          onSelect={onSelect}
-          selectedFile={selectedFile}
-          files={fileStructure}
-        />
-        <div className="flex flex-col ">
-          <Output />
-          <Terminal socket={socket} />
+    <>
+      <div className="flex text-lg">
+        <div className="flex">
+          <Editor
+            socket={socket}
+            onSelect={onSelect}
+            selectedFile={selectedFile}
+            files={fileStructure}
+          />
+          <div className="flex flex-col ">
+            <Output />
+            <Terminal socket={socket} />
+          </div>
         </div>
       </div>
-    </div>
+
+      <Draggable onDrag={onDrag} onStop={onStop}>
+        <div className="Piece">
+          <span className="Piece-phrase">
+            <Interview token={token} />
+          </span>
+        </div>
+      </Draggable>
+    </>
   );
 };
