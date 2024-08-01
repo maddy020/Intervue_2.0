@@ -14,7 +14,7 @@ COPY package.json ./
 ENV PYTHON=/usr/bin/python3
 
 # Install dependencies, including TypeScript
-RUN npm install typescript --save-dev
+RUN npm install -g typescript 
 
 RUN npm install aws-sdk
 

@@ -44,10 +44,10 @@ const TerminalComponent = ({ socket }: { socket: Socket | null }) => {
         case "\x7F":
           socket.emit("terminalData", { data: "\b" });
           break;
-        case "\x1B[D": // Left arrow key
+        case "\x1B[D":
           socket.emit("terminalData", { data: "\x1B[D" });
           break;
-        case "\x1B[C": // Right arrow key
+        case "\x1B[C":
           socket.emit("terminalData", { data: "\x1B[C" });
           break;
         default:
