@@ -65,6 +65,29 @@ app.post("/start", async (req, res) => {
   }
 });
 
+app.post("/startWorker", async (req, res) => {
+  const namespace = "default";
+  try {
+    const kubeManifests = readAndParseKubeYaml(
+      path.join(__dirname, "../worker.yaml"),
+      ""
+    );
+    for (const manifest of kubeManifests) {
+      switch (manifest.kind) {
+        case "Deployment":
+          await appsV1Api.createNamespacedDeployment(namespace, manifest);
+          break;
+        default:
+          console.log(`Unsupported kind: ${manifest.kind}`);
+      }
+    }
+    res.status(200).send({ message: "Created Worker" });
+  } catch (error) {
+    console.error("Failed to create worker", error);
+    res.status(500).send({ message: "Failed to create worker" });
+  }
+});
+
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
 });

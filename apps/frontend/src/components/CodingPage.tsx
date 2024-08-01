@@ -31,11 +31,17 @@ export const CodingPage = () => {
   console.log(token);
   useEffect(() => {
     if (replId && !isPodCreated) {
+      // axios
+      //   .post("http://localhost:3002/start", { replId: replId })
+      //   .then(() => {
+      //     localStorage.setItem("replId", replId);
+      //     setPodCreated(true);
+      //   })
+      //   .catch((err) => console.log(err));
       axios
-        .post("http://localhost:3002/start", { replId: replId })
+        .post("http://localhost:3002/startWorker")
         .then(() => {
-          localStorage.setItem("replId", replId);
-          setPodCreated(true);
+          console.log("Worker created");
         })
         .catch((err) => console.log(err));
     }

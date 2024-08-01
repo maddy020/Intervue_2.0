@@ -3,10 +3,19 @@ import express from "express";
 import cors from "cors";
 import { copyS3Folder } from "@repo/aws_utils";
 import { AccessToken } from "livekit-server-sdk";
+import { Queue } from "bullmq";
 
 const app = express();
+const queue = new Queue("Intervue", {
+  connection: {
+    host: "localhost",
+    port: 6379,
+  },
+});
+queue.add("cars", { replId: "blue" });
 app.use(cors());
 app.use(express.json());
+
 app.post("/project", async (req, res) => {
   try {
     const { replId, language } = req.body;
