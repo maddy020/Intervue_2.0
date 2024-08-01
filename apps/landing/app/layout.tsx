@@ -17,7 +17,9 @@ export default function RootLayout({
 }) {
   const year = new Date().getFullYear();
   return (
-    <ClerkProvider publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}>
+    <ClerkProvider
+      publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
+    >
       <html lang="en" className="m-0 p-0 box-border">
         <body className={`${inter.className} w-full h-screen px-4`}>
           <main>{children}</main>
