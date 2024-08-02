@@ -38,12 +38,12 @@ export const CodingPage = () => {
       //     setPodCreated(true);
       //   })
       //   .catch((err) => console.log(err));
-      axios
-        .post("http://localhost:3002/startWorker")
-        .then(() => {
-          console.log("Worker created");
-        })
-        .catch((err) => console.log(err));
+      // axios
+      //   .post("http://localhost:3002/startWorker")
+      //   .then(() => {
+      //     console.log("Worker created");
+      //   })
+      //   .catch((err) => console.log(err));
     }
   });
   if (!podCreated) {

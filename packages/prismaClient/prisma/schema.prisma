@@ -1,0 +1,36 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id    String     @id @default(uuid())
+  email String  @unique
+  name  String
+  meets Meet[] @relation("Organizer")
+  participatedIn MeetsParticipants[]
+}
+
+model Meet {
+  id          String     @id @default(uuid())
+  userId      String
+  user        User       @relation("Organizer", fields: [userId], references: [id])
+  status      String
+  dateandTime DateTime
+  participants MeetsParticipants[]
+}
+
+model MeetsParticipants {
+  meetId String
+  userId String
+
+  meet Meet @relation(fields: [meetId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+
+  @@id([meetId, userId]) // Composite primary key
+}
+

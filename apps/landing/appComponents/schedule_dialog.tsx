@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import axios from "axios";
 import {
   Dialog,
   DialogContent,
@@ -11,11 +12,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ComboboxDemo } from "../appComponents/dropdown";
 import { useState } from "react";
-import { DatePickerDemo } from "../appComponents/datePicker";
-import TimePicker from "react-time-picker";
 import { useRouter } from "next/navigation";
-import "react-time-picker/dist/TimePicker.css";
+import DateTimePicker from "react-datetime-picker";
+import "react-datetime-picker/dist/DateTimePicker.css";
+import "react-calendar/dist/Calendar.css";
 import "react-clock/dist/Clock.css";
+import { Value } from "@repo/types";
 
 function getRandomId() {
   const SLUG_WORKS = [
@@ -45,7 +47,7 @@ const Schedule_Dialog = () => {
     []
   );
   const [searchQuery, setSearchQuery] = useState("");
-  const [time, setTime] = useState("10:00");
+  const [time, setTime] = useState<Value>(new Date());
   const router = useRouter();
 
   const participants = [
@@ -74,9 +76,13 @@ const Schedule_Dialog = () => {
     );
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     alert(`Interview Scheduled at ${time}`);
-    router.push("/");
+    const res = await axios.post("http://localhost:8000/schedulemeet", {
+      replId: value,
+      scheduleTime: time,
+      participants: selectedParticipants,
+    });
   };
 
   const filteredParticipants = participants.filter((participant) =>
@@ -101,11 +107,18 @@ const Schedule_Dialog = () => {
               disabled
             />
           </div>
+
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="date">Date</Label>
-            <DatePickerDemo />
+            <DateTimePicker
+              onChange={(value) => {
+                setTime(value?.toISOString());
+                console.log(value?.toISOString());
+              }}
+              value={time}
+            />
           </div>
-          <div className="grid grid-cols-4 items-center gap-4">
+          {/* <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="time">Time</Label>
             <TimePicker
               id="time"
@@ -114,7 +127,7 @@ const Schedule_Dialog = () => {
               clockIcon={null}
               disableClock={true}
             />
-          </div>
+          </div> */}
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="language">Language</Label>
             <ComboboxDemo language={language} setLanguage={setLanguage} />

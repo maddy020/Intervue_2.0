@@ -1,18 +1,18 @@
 require("dotenv").config();
 import express from "express";
 import cors from "cors";
+import axios from "axios";
 import { copyS3Folder } from "@repo/aws_utils";
 import { AccessToken } from "livekit-server-sdk";
-import { Queue } from "bullmq";
+import { delay, Queue } from "bullmq";
+import prisma from "@repo/prismaClient";
 
 const app = express();
 const queue = new Queue("Intervue", {
   connection: {
-    host: "localhost",
-    port: 6379,
+    host: "redis.cloud.rishavrtwt.tech",
   },
 });
-queue.add("cars", { replId: "blue" });
 app.use(cors());
 app.use(express.json());
 
@@ -57,4 +57,37 @@ app.get("/getToken", async (req, res) => {
   res.json({ token: token });
 });
 
-app.listen(8000, () => console.log("App is running on port 8000"));
+app.post("/schedulemeet", async (req, res) => {
+  const { replId, scheduleTime, participants } = req.body;
+  const currTime = new Date();
+  const t = new Date(scheduleTime.substring(0, 19));
+  const delay = t.getTime() - currTime.getTime();
+  const response = await queue.add(
+    replId,
+    {
+      data: {
+        participants,
+        replId,
+        scheduleTime,
+      },
+    },
+    {
+      delay: delay,
+    }
+  );
+  console.log(response);
+});
+
+app.post("/addUser", async (req, res) => {
+  const { email, name } = req.body;
+  await prisma.user.create({
+    data: {
+      name: name,
+      email: email,
+    },
+  });
+});
+app.listen(8000, async () => {
+  console.log("App is running on port 8000");
+  // await axios.post("http://localhost:3002/startWorker");
+});

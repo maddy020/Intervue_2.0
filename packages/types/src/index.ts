@@ -38,3 +38,7 @@ export interface SubTreeProps {
   selectedFile: File | undefined;
   onSelect: (file: File) => void;
 }
+
+export type ValuePiece = Date | null;
+
+export type Value = ValuePiece | [ValuePiece, ValuePiece];
