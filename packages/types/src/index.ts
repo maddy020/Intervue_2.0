@@ -42,3 +42,14 @@ export interface SubTreeProps {
 export type ValuePiece = Date | null;
 
 export type Value = ValuePiece | [ValuePiece, ValuePiece];
+
+export interface BaseUser {
+  id: string;
+  name: string;
+  email: string;
+}
+
+export interface ExtendedUser extends BaseUser {
+  meet: Array<JSON>;
+  meetParticipants: Array<JSON>;
+}

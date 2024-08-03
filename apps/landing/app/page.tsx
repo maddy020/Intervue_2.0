@@ -8,7 +8,7 @@ export default function Home() {
   useEffect(() => {
     if (isSignedIn) {
       axios
-        .post("http://localhost:3000/addUser", {
+        .post("http://localhost:8000/addUser", {
           email: user.primaryEmailAddress?.emailAddress,
           name: user.fullName,
         })

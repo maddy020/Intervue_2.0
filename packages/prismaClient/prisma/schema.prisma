@@ -8,19 +8,20 @@ datasource db {
 }
 
 model User {
-  id    String     @id @default(uuid())
-  email String  @unique
-  name  String
-  meets Meet[] @relation("Organizer")
+  id             String              @id @default(uuid())
+  email          String              @unique
+  name           String
+  meets          Meet[]              @relation("Organizer")
   participatedIn MeetsParticipants[]
 }
 
 model Meet {
-  id          String     @id @default(uuid())
-  userId      String
-  user        User       @relation("Organizer", fields: [userId], references: [id])
-  status      String
-  dateandTime DateTime
+  id           String              @id @default(uuid())
+  userId       String
+  Interviewer  User                @relation("Organizer", fields: [userId], references: [id])
+  status       String
+  dateandTime  DateTime
+  roomId       String
   participants MeetsParticipants[]
 }
 
@@ -33,4 +34,3 @@ model MeetsParticipants {
 
   @@id([meetId, userId]) // Composite primary key
 }
-

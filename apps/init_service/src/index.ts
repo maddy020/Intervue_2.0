@@ -5,7 +5,8 @@ import axios from "axios";
 import { copyS3Folder } from "@repo/aws_utils";
 import { AccessToken } from "livekit-server-sdk";
 import { delay, Queue } from "bullmq";
-import prisma from "@repo/prismaClient";
+import prisma from "@repo/prismaclient";
+import { BaseUser } from "@repo/types";
 
 const app = express();
 const queue = new Queue("Intervue", {
@@ -58,16 +59,17 @@ app.get("/getToken", async (req, res) => {
 });
 
 app.post("/schedulemeet", async (req, res) => {
-  const { replId, scheduleTime, participants } = req.body;
+  const { replId, scheduleTime, participants, interviewer } = req.body;
   const currTime = new Date();
   const t = new Date(scheduleTime.substring(0, 19));
   const delay = t.getTime() - currTime.getTime();
-  const response = await queue.add(
+  await queue.add(
     replId,
     {
       data: {
         participants,
         replId,
+        interviewer,
         scheduleTime,
       },
     },
@@ -75,18 +77,50 @@ app.post("/schedulemeet", async (req, res) => {
       delay: delay,
     }
   );
-  console.log(response);
+  const p = participants.map((participant: { id: string }) => ({
+    userId: participant.id,
+  }));
+  await prisma.meet.create({
+    data: {
+      roomId: replId,
+      userId: interviewer.id,
+      status: "scheduled",
+      participants: {
+        create: p,
+      },
+      dateandTime: scheduleTime,
+    },
+  });
+  return res.json({ status: "meeting scheduled" });
+});
+
+app.get("/allUsers", async (req, res) => {
+  try {
+    const allUsers = await prisma.user.findMany({
+      select: { id: true, name: true, email: true },
+    });
+    res.json({ allUsers });
+  } catch (err) {
+    console.log("Error in getting all users", err);
+  }
 });
 
 app.post("/addUser", async (req, res) => {
-  const { email, name } = req.body;
-  await prisma.user.create({
-    data: {
-      name: name,
-      email: email,
-    },
-  });
+  try {
+    const { email, name } = req.body;
+    console.log(email);
+    console.log(name);
+    await prisma.user.create({
+      data: {
+        name: name,
+        email: email,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+  }
 });
+
 app.listen(8000, async () => {
   console.log("App is running on port 8000");
   // await axios.post("http://localhost:3002/startWorker");

@@ -18,7 +18,8 @@ import "react-datetime-picker/dist/DateTimePicker.css";
 import "react-calendar/dist/Calendar.css";
 import "react-clock/dist/Clock.css";
 import { Value } from "@repo/types";
-
+import { BaseUser } from "@repo/types";
+import { useUser } from "@clerk/nextjs";
 function getRandomId() {
   const SLUG_WORKS = [
     "cool",
@@ -43,57 +44,71 @@ function getRandomId() {
 const Schedule_Dialog = () => {
   const [value, setValue] = useState(getRandomId());
   const [language, setLanguage] = useState("");
-  const [selectedParticipants, setSelectedParticipants] = useState<string[]>(
+  const [selectedParticipants, setSelectedParticipants] = useState<BaseUser[]>(
     []
   );
+  const user = useUser();
+  console.log(user);
   const [searchQuery, setSearchQuery] = useState("");
-  const [time, setTime] = useState<Value>(new Date());
+  const [time, setTime] = useState(new Date().toISOString());
+  const [participants, setParticipants] = useState<BaseUser[]>([]);
+  const [filteredParticipants, setFilteredParticipants] = useState<BaseUser[]>(
+    []
+  );
   const router = useRouter();
 
-  const participants = [
-    "rishavrtwt@gmail.com",
-    "maddy020@gmail.com",
-    "rohanhr@gmail.com",
-    "kunalhello@gmail.com",
-    "rishavrtwt@gmail.com",
-    "maddy020@gmail.com",
-    "rohanhr@gmail.com",
-    "kunalhello@gmail.com",
-  ];
-
-  const handleParticipantSelect = (email: string) => {
+  const handleParticipantSelect = (participant: BaseUser) => {
     if (
       selectedParticipants.length < 3 &&
-      !selectedParticipants.includes(email)
+      !selectedParticipants.find((p) => p.email === participant.email)
     ) {
-      setSelectedParticipants([...selectedParticipants, email]);
+      setSelectedParticipants([...selectedParticipants, participant]);
     }
   };
 
   const handleParticipantRemove = (email: string) => {
     setSelectedParticipants(
-      selectedParticipants.filter((item) => item !== email)
+      selectedParticipants.filter((item) => item.email !== email)
     );
   };
-
+  const loggedUser = participants.find(
+    (participant) =>
+      participant.email == user.user?.primaryEmailAddress?.emailAddress
+  );
+  console.log(loggedUser);
   const handleSubmit = async () => {
-    alert(`Interview Scheduled at ${time}`);
-    const res = await axios.post("http://localhost:8000/schedulemeet", {
+    const loggedUser = participants.find(
+      (participant) =>
+        participant.email == user.user?.primaryEmailAddress?.emailAddress
+    );
+    await axios.post("http://localhost:8000/schedulemeet", {
       replId: value,
+      interviewer: {
+        id: loggedUser?.id,
+        email: loggedUser?.email,
+        name: loggedUser?.name,
+      },
       scheduleTime: time,
-      participants: selectedParticipants,
+      participants: [...selectedParticipants, loggedUser],
     });
   };
 
-  const filteredParticipants = participants.filter((participant) =>
-    participant.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const handleScheduling = async () => {
+    try {
+      const res = await axios.get("http://localhost:8000/allUsers");
+      setParticipants(res.data.allUsers);
+    } catch (err) {
+      console.log("Error in setting all users", err);
+    }
+  };
 
   return (
     <Dialog>
       <div className="flex justify-end">
         <DialogTrigger asChild>
-          <Button variant="outline">Schedule Interview</Button>
+          <Button variant="outline" onClick={handleScheduling}>
+            Schedule Interview
+          </Button>
         </DialogTrigger>
       </div>
       <DialogContent className="sm:max-w-[425px]">
@@ -112,22 +127,13 @@ const Schedule_Dialog = () => {
             <Label htmlFor="date">Date</Label>
             <DateTimePicker
               onChange={(value) => {
-                setTime(value?.toISOString());
+                setTime(value?.toISOString() as string);
                 console.log(value?.toISOString());
               }}
               value={time}
-            />
-          </div>
-          {/* <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="time">Time</Label>
-            <TimePicker
-              id="time"
-              onChange={(value) => setTime(value || "")}
-              value={time}
-              clockIcon={null}
               disableClock={true}
             />
-          </div> */}
+          </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="language">Language</Label>
             <ComboboxDemo language={language} setLanguage={setLanguage} />
@@ -138,7 +144,21 @@ const Schedule_Dialog = () => {
               <Input
                 id="search"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  setFilteredParticipants(
+                    participants.filter((participant) => {
+                      return (
+                        participant.name
+                          .toLowerCase()
+                          .includes(e.target.value.toLowerCase()) ||
+                        participant.email
+                          .toLowerCase()
+                          .includes(e.target.value.toLowerCase())
+                      );
+                    })
+                  );
+                }}
                 className="col-span-3"
                 placeholder="Search..."
               />
@@ -147,7 +167,7 @@ const Schedule_Dialog = () => {
               <div className="absolute w-full mt-2">
                 {filteredParticipants.map((participant) => (
                   <div
-                    key={participant}
+                    key={participant.email}
                     className="flex items-center justify-between"
                   >
                     <Button
@@ -156,7 +176,7 @@ const Schedule_Dialog = () => {
                       onClick={() => handleParticipantSelect(participant)}
                       disabled={selectedParticipants.includes(participant)}
                     >
-                      {participant}
+                      {participant.name}
                     </Button>
                   </div>
                 ))}
@@ -165,12 +185,15 @@ const Schedule_Dialog = () => {
           </div>
           <div className="grid gap-2 col-span-4">
             {selectedParticipants.map((participant) => (
-              <div key={participant} className="flex items-center space-x-2">
-                <span>{participant}</span>
+              <div
+                key={participant.email}
+                className="flex items-center space-x-2"
+              >
+                <span>{participant.name}</span>
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => handleParticipantRemove(participant)}
+                  onClick={() => handleParticipantRemove(participant.email)}
                 >
                   Cancel
                 </Button>
