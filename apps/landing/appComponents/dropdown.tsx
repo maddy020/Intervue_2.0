@@ -46,7 +46,7 @@ const frameworks = [
   },
 ];
 
-export function ComboboxDemo({
+export default function ComboboxDemo({
   language,
   setLanguage,
 }: {

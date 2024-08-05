@@ -1,9 +1,6 @@
-"use client";
-
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,7 +9,17 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import Link from "next/link";
+import axios from "axios";
+import { useUser } from "@clerk/nextjs";
 
+// export type Meeting = {
+//   status: string;
+//   roomId: string;
+//   interviewee_name: string;
+//   dateandTime: string;
+//   meeting_link: string;
+// };
 export type Meeting = {
   id: string;
   meeting_link: string;
@@ -21,29 +28,12 @@ export type Meeting = {
   Date_and_time: string;
 };
 
-export const columns: ColumnDef<Meeting>[] = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
+export const columns = (
+  value: string,
+  username: string,
+  token: string,
+  setToken: React.Dispatch<React.SetStateAction<string>>
+): ColumnDef<Meeting>[] => [
   {
     accessorKey: "status",
     header: "Status",
@@ -68,11 +58,26 @@ export const columns: ColumnDef<Meeting>[] = [
     accessorKey: "meeting_link",
     header: "Meeting Link",
     cell: ({ row }) => {
-      const meetingLink = row.original.meeting_link;
+      async function solve() {
+        try {
+          const res1 = await axios.get(
+            `http://localhost:8000/getToken?replId=${value}&username=${username}`
+          );
+
+          setToken(res1.data.token);
+        } catch (error) {
+          console.log("Error while fetching token", error);
+        }
+      }
+      solve();
       return (
-        <div className="font-medium underline cursor-pointer">
-          {meetingLink}
-        </div>
+        <Link
+          href={`http://localhost:5173/coding?replId=${value}&token=${token}`}
+          className="font-medium underline cursor-pointer"
+          target="_blank"
+        >
+          Join now
+        </Link>
       );
     },
   },

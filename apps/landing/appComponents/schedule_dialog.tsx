@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ComboboxDemo } from "../appComponents/dropdown";
+import ComboboxDemo from "../appComponents/dropdown";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import DateTimePicker from "react-datetime-picker";
@@ -20,35 +20,20 @@ import "react-clock/dist/Clock.css";
 import { Value } from "@repo/types";
 import { BaseUser } from "@repo/types";
 import { useUser } from "@clerk/nextjs";
-function getRandomId() {
-  const SLUG_WORKS = [
-    "cool",
-    "coder",
-    "awesome",
-    "cringe",
-    "worker",
-    "intelligent",
-    "rider",
-    "load",
-    "network",
-    "open",
-    "source",
-  ];
-  let slug = "";
-  for (let i = 0; i < 3; i++) {
-    slug += SLUG_WORKS[Math.floor(Math.random() * SLUG_WORKS.length)];
-  }
-  return slug;
-}
 
-const Schedule_Dialog = () => {
-  const [value, setValue] = useState(getRandomId());
-  const [language, setLanguage] = useState("");
+const Schedule_Dialog = ({
+  value,
+  language,
+  setLanguage,
+}: {
+  value: string;
+  language: string;
+  setLanguage: React.Dispatch<React.SetStateAction<string>>;
+}) => {
   const [selectedParticipants, setSelectedParticipants] = useState<BaseUser[]>(
     []
   );
   const user = useUser();
-  console.log(user);
   const [searchQuery, setSearchQuery] = useState("");
   const [time, setTime] = useState(new Date().toISOString());
   const [participants, setParticipants] = useState<BaseUser[]>([]);
@@ -71,16 +56,13 @@ const Schedule_Dialog = () => {
       selectedParticipants.filter((item) => item.email !== email)
     );
   };
+
   const loggedUser = participants.find(
     (participant) =>
       participant.email == user.user?.primaryEmailAddress?.emailAddress
   );
-  console.log(loggedUser);
+
   const handleSubmit = async () => {
-    const loggedUser = participants.find(
-      (participant) =>
-        participant.email == user.user?.primaryEmailAddress?.emailAddress
-    );
     await axios.post("http://localhost:8000/schedulemeet", {
       replId: value,
       interviewer: {
@@ -90,6 +72,10 @@ const Schedule_Dialog = () => {
       },
       scheduleTime: time,
       participants: [...selectedParticipants, loggedUser],
+    });
+    const res2 = await axios.post("http://localhost:8000/project", {
+      replId: value,
+      language: language,
     });
   };
 
@@ -101,6 +87,7 @@ const Schedule_Dialog = () => {
       console.log("Error in setting all users", err);
     }
   };
+  console.log("time", time);
 
   return (
     <Dialog>
@@ -128,9 +115,8 @@ const Schedule_Dialog = () => {
             <DateTimePicker
               onChange={(value) => {
                 setTime(value?.toISOString() as string);
-                console.log(value?.toISOString());
               }}
-              value={time}
+              value={new Date(time)}
               disableClock={true}
             />
           </div>
@@ -165,21 +151,27 @@ const Schedule_Dialog = () => {
             </div>
             {searchQuery && (
               <div className="absolute w-full mt-2">
-                {filteredParticipants.map((participant) => (
-                  <div
-                    key={participant.email}
-                    className="flex items-center justify-between"
-                  >
-                    <Button
-                      className="w-full flex justify-start"
-                      variant="ghost"
-                      onClick={() => handleParticipantSelect(participant)}
-                      disabled={selectedParticipants.includes(participant)}
-                    >
-                      {participant.name}
-                    </Button>
-                  </div>
-                ))}
+                {filteredParticipants.map(
+                  (participant) =>
+                    loggedUser?.email !== participant.email && (
+                      <div
+                        key={participant.email}
+                        className="flex items-center justify-between"
+                      >
+                        <Button
+                          className="w-full flex justify-start"
+                          variant="ghost"
+                          onClick={() => {
+                            handleParticipantSelect(participant);
+                            setSearchQuery("");
+                          }}
+                          disabled={selectedParticipants.includes(participant)}
+                        >
+                          {participant.name}
+                        </Button>
+                      </div>
+                    )
+                )}
               </div>
             )}
           </div>

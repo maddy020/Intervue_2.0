@@ -59,39 +59,44 @@ app.get("/getToken", async (req, res) => {
 });
 
 app.post("/schedulemeet", async (req, res) => {
-  const { replId, scheduleTime, participants, interviewer } = req.body;
-  const currTime = new Date();
-  const t = new Date(scheduleTime.substring(0, 19));
-  const delay = t.getTime() - currTime.getTime();
-  await queue.add(
-    replId,
-    {
+  try {
+    const { replId, scheduleTime, participants, interviewer } = req.body;
+    const currTime = new Date();
+    const t = new Date(scheduleTime);
+    const delay = t.getTime() - currTime.getTime();
+    await queue.add(
+      replId,
+      {
+        data: {
+          participants,
+          replId,
+          interviewer,
+          scheduleTime,
+        },
+      },
+      {
+        delay: delay,
+      }
+    );
+    const p = participants.map((participant: { id: string }) => ({
+      userId: participant.id,
+    }));
+    await prisma.meet.create({
       data: {
-        participants,
-        replId,
-        interviewer,
-        scheduleTime,
+        roomId: replId,
+        userId: interviewer.id,
+        status: "scheduled",
+        participants: {
+          create: p,
+        },
+        dateandTime: scheduleTime,
       },
-    },
-    {
-      delay: delay,
-    }
-  );
-  const p = participants.map((participant: { id: string }) => ({
-    userId: participant.id,
-  }));
-  await prisma.meet.create({
-    data: {
-      roomId: replId,
-      userId: interviewer.id,
-      status: "scheduled",
-      participants: {
-        create: p,
-      },
-      dateandTime: scheduleTime,
-    },
-  });
-  return res.json({ status: "meeting scheduled" });
+    });
+    return res.json({ status: "meeting scheduled" });
+  } catch (error) {
+    console.log("Error in scheduling meeting", error);
+    return res.json({ status: "error in scheduling meeting" });
+  }
 });
 
 app.get("/allUsers", async (req, res) => {
@@ -121,7 +126,26 @@ app.post("/addUser", async (req, res) => {
   }
 });
 
+app.get("/allMeet", async (req, res) => {
+  try {
+    const allmeet = await prisma.meet.findMany({
+      include: {
+        participants: {
+          include: {
+            user: true,
+          },
+        },
+      },
+    });
+    res.json({ allmeet });
+  } catch (error) {
+    console.log("Error in getting all meetings", error);
+  }
+});
+
 app.listen(8000, async () => {
   console.log("App is running on port 8000");
-  // await axios.post("http://localhost:3002/startWorker");
+  // setTimeout(async () => {
+  //   await axios.post("http://localhost:3002/startWorker");
+  // }, 10000);
 });

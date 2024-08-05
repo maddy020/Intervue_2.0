@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import Terminal from "./Terminal";
-import axios from "axios";
 import { Socket, io } from "socket.io-client";
 import { useSearchParams } from "react-router-dom";
 import Editor from "./Editor";
@@ -12,12 +11,16 @@ import Draggable from "react-draggable";
 function useSocket() {
   const [socket, setSocket] = useState<Socket | null>(null);
   useEffect(() => {
-    const replId = localStorage.getItem("replId");
-    const newSocket = io(`ws://${replId}.madhav.devilclub.tech`);
-    setSocket(newSocket);
-    return () => {
-      newSocket.disconnect();
-    };
+    try {
+      const replId = localStorage.getItem("replId");
+      const newSocket = io(`ws://${replId}.interview.rishavrtwt.tech`);
+      setSocket(newSocket);
+      return () => {
+        newSocket.disconnect();
+      };
+    } catch (err) {
+      console.log(err);
+    }
   }, []);
   return socket;
 }
@@ -30,22 +33,12 @@ export const CodingPage = () => {
   const token = searchParams.get("token") ?? "";
   console.log(token);
   useEffect(() => {
-    if (replId && !isPodCreated) {
-      // axios
-      //   .post("http://localhost:3002/start", { replId: replId })
-      //   .then(() => {
-      //     localStorage.setItem("replId", replId);
-      //     setPodCreated(true);
-      //   })
-      //   .catch((err) => console.log(err));
-      // axios
-      //   .post("http://localhost:3002/startWorker")
-      //   .then(() => {
-      //     console.log("Worker created");
-      //   })
-      //   .catch((err) => console.log(err));
+    if (replId && !podCreated) {
+      localStorage.setItem("replId", replId);
+      setPodCreated(true);
     }
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   if (!podCreated) {
     return <>Booting....</>;
   }
