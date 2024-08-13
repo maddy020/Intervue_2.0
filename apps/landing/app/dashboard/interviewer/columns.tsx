@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -5,48 +6,91 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
 import axios from "axios";
-import { useUser } from "@clerk/nextjs";
+import { Meeting } from "@repo/types";
 
-// export type Meeting = {
-//   status: string;
-//   roomId: string;
-//   interviewee_name: string;
-//   dateandTime: string;
-//   meeting_link: string;
-// };
-export type Meeting = {
-  id: string;
-  meeting_link: string;
-  status: "Done" | "Not Done";
-  interviewee_name: string;
-  Date_and_time: string;
+function MeetingLinkCell({
+  value,
+  username,
+  token,
+  setToken,
+  replId,
+}: {
+  value: string;
+  username: string;
+  token: string;
+  setToken: React.Dispatch<React.SetStateAction<string>>;
+  replId: string;
+}) {
+  useEffect(() => {
+    async function solve() {
+      try {
+        const res1 = await axios.get(
+          `http://localhost:8000/getToken?replId=${value}&username=${username}`
+        );
+
+        setToken(res1.data.token);
+      } catch (error) {
+        console.log("Error while fetching token", error);
+      }
+    }
+    solve();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value, username]);
+
+  return (
+    <Link
+      href={`http://localhost:5173/coding?replId=${replId}&token=${token}`}
+      className="font-medium underline cursor-pointer"
+      target="_blank"
+    >
+      Join now
+    </Link>
+  );
+}
+
+const handleDeleteMeeting = async (
+  meetingId: string,
+  setAllMeet: React.Dispatch<React.SetStateAction<Meeting[]>>
+) => {
+  try {
+    await axios.delete(`http://localhost:8000/deleteMeet/${meetingId}`);
+    const res = await axios.get("http://localhost:8000/allMeet");
+    setAllMeet(res.data.allmeet);
+  } catch (error) {
+    console.log("Error while deleting meeting", error);
+    alert("Error while deleting meeting");
+  }
 };
 
 export const columns = (
   value: string,
   username: string,
   token: string,
-  setToken: React.Dispatch<React.SetStateAction<string>>
+  setToken: React.Dispatch<React.SetStateAction<string>>,
+  setAllMeet: React.Dispatch<React.SetStateAction<Meeting[]>>
 ): ColumnDef<Meeting>[] => [
   {
     accessorKey: "status",
     header: "Status",
   },
   {
-    accessorKey: "interviewee_name",
+    accessorKey: "participants",
     header: "Interviewee Name",
+    cell: ({ row }) => {
+      const participants = row.original.participants;
+      return participants.map((p) => p.user.name).join(", ");
+    },
   },
   {
-    accessorKey: "Date_and_time",
+    accessorKey: "dateandTime",
     header: "Date & Time",
     cell: ({ row }) => {
-      const date = new Date(row.original.Date_and_time);
+      const date = new Date(row.original.dateandTime);
       return date.toLocaleString("en-US", {
         dateStyle: "medium",
         timeStyle: "short",
@@ -55,31 +99,16 @@ export const columns = (
     sortingFn: "datetime",
   },
   {
-    accessorKey: "meeting_link",
     header: "Meeting Link",
-    cell: ({ row }) => {
-      async function solve() {
-        try {
-          const res1 = await axios.get(
-            `http://localhost:8000/getToken?replId=${value}&username=${username}`
-          );
-
-          setToken(res1.data.token);
-        } catch (error) {
-          console.log("Error while fetching token", error);
-        }
-      }
-      solve();
-      return (
-        <Link
-          href={`http://localhost:5173/coding?replId=${value}&token=${token}`}
-          className="font-medium underline cursor-pointer"
-          target="_blank"
-        >
-          Join now
-        </Link>
-      );
-    },
+    cell: ({ row }) => (
+      <MeetingLinkCell
+        value={value}
+        username={username}
+        token={token}
+        setToken={setToken}
+        replId={row.original.roomId}
+      />
+    ),
   },
   {
     id: "actions",
@@ -105,9 +134,7 @@ export const columns = (
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
-              onClick={() => {
-                console.log(`Cancel meeting with ID: ${meeting.id}`);
-              }}
+              onClick={() => handleDeleteMeeting(meeting.id, setAllMeet)}
               className="cursor-pointer"
             >
               Cancel Meeting

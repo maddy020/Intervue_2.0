@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
-import { Meeting, columns } from "./columns";
+import { useEffect, useState } from "react";
+import { columns } from "./columns";
 import { DataTable } from "./data-table";
 import Schedule_Dialog from "@/appComponents/schedule_dialog";
 import { useUser } from "@clerk/nextjs";
-// import { Suspense } from "react";
+import { Meeting } from "@repo/types";
+import axios from "axios";
 
 function getRandomId() {
   const SLUG_WORKS = [
@@ -34,40 +35,22 @@ export default function DemoPage() {
   const [value, setValue] = useState(getRandomId());
   const [token, setToken] = useState("");
   const user = useUser();
-  const data: Meeting[] = [
-    {
-      id: "awesomecoderawesome",
-      meeting_link: "https://mydomain.com",
-      status: "Not Done",
-      interviewee_name: "Rahul, Rohan, Karan Aujla",
-      Date_and_time: "2024-08-01T10:00:00Z",
-    },
-  ];
-  // const [data, setData] = useState<Meeting[]>([{
-  //   status: "",
-  //   roomId: "",
-  //   interviewee_name: "",
-  //   dateandTime: "",
-  //   meeting_link: "https://mydomain.com"
-  // }]);
+  const [allMeet, setAllMeet] = useState<Meeting[]>([]);
 
-  // useEffect(() => {
-  //   const getUserMeet = async () => {
-  //     try {
-  //       const res = await axios.get("http://localhost:8000/allMeet");
-  //       console.log(res.data);
-  //       setData({
-  //         status: res.data.
-  //       });
-  //     } catch (error) {
-  //       console.log("Error while fetching data", error);
-  //     }
-  //   };
-  //   getUserMeet();
-  // }, []);
+  useEffect(() => {
+    const getUserMeet = async () => {
+      try {
+        const res = await axios.get("http://localhost:8000/allMeet");
+        console.log(res.data.allmeet);
+        setAllMeet(res.data.allmeet);
+      } catch (error) {
+        console.log("Error while fetching data", error);
+      }
+    };
+    getUserMeet();
+  }, []);
 
   return (
-    // <Suspense>
     <div className="container mx-auto py-10">
       <h1 className="text-center text-2xl mb-8 underline">
         Interviewer Dashboard
@@ -76,12 +59,23 @@ export default function DemoPage() {
         value={value}
         language={language}
         setLanguage={setLanguage}
+        setValue={setValue}
+        getRandomId={getRandomId}
+        setAllMeet={setAllMeet}
+        allMeet={allMeet}
       />
       <DataTable
-        columns={columns(value, user.user?.fullName as string, token, setToken)}
-        data={data}
+        columns={columns(
+          value,
+          user.user?.fullName as string,
+          token,
+          setToken,
+          setAllMeet
+        )}
+        data={allMeet.map((meet) => {
+          return meet;
+        })}
       />
     </div>
-    // </Suspense>
   );
 }

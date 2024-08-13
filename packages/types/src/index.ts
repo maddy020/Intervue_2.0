@@ -1,3 +1,5 @@
+import { ColumnDef } from "@tanstack/react-table";
+
 export enum FileType {
   FILE,
   DIRECTORY,
@@ -52,4 +54,17 @@ export interface BaseUser {
 export interface ExtendedUser extends BaseUser {
   meet: Array<JSON>;
   meetParticipants: Array<JSON>;
+}
+
+export type Meeting = {
+  id: string;
+  status: string;
+  dateandTime: string;
+  participants: Array<{ user: { name: string } }>;
+  roomId: string;
+};
+
+export interface DataTableProps<TData, TValue> {
+  columns: ColumnDef<TData, TValue>[];
+  data: TData[];
 }

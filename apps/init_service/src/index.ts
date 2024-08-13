@@ -1,12 +1,10 @@
 require("dotenv").config();
 import express from "express";
 import cors from "cors";
-import axios from "axios";
 import { copyS3Folder } from "@repo/aws_utils";
 import { AccessToken } from "livekit-server-sdk";
-import { delay, Queue } from "bullmq";
+import { Queue } from "bullmq";
 import prisma from "@repo/prismaclient";
-import { BaseUser } from "@repo/types";
 
 const app = express();
 const queue = new Queue("Intervue", {
@@ -81,7 +79,7 @@ app.post("/schedulemeet", async (req, res) => {
     const p = participants.map((participant: { id: string }) => ({
       userId: participant.id,
     }));
-    await prisma.meet.create({
+    const newMeet = await prisma.meet.create({
       data: {
         roomId: replId,
         userId: interviewer.id,
@@ -91,8 +89,15 @@ app.post("/schedulemeet", async (req, res) => {
         },
         dateandTime: scheduleTime,
       },
+      include: {
+        participants: {
+          include: {
+            user: true,
+          },
+        },
+      },
     });
-    return res.json({ status: "meeting scheduled" });
+    return res.json({ status: "meeting scheduled", newMeet: newMeet });
   } catch (error) {
     console.log("Error in scheduling meeting", error);
     return res.json({ status: "error in scheduling meeting" });
@@ -140,6 +145,29 @@ app.get("/allMeet", async (req, res) => {
     res.json({ allmeet });
   } catch (error) {
     console.log("Error in getting all meetings", error);
+  }
+});
+
+app.delete("/deleteMeet/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    await prisma.meetsParticipants.deleteMany({
+      where: {
+        meetId: id,
+      },
+    });
+
+    await prisma.meet.delete({
+      where: {
+        id: id,
+      },
+    });
+
+    res.json({ status: "meeting deleted" });
+  } catch (error) {
+    console.log("Error in deleting meeting", error);
+    res.status(500).json({ error: "Error in deleting meeting" });
   }
 });
 

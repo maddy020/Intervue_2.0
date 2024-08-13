@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import axios from "axios";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogFooter,
   DialogTrigger,
@@ -17,18 +18,26 @@ import DateTimePicker from "react-datetime-picker";
 import "react-datetime-picker/dist/DateTimePicker.css";
 import "react-calendar/dist/Calendar.css";
 import "react-clock/dist/Clock.css";
-import { Value } from "@repo/types";
 import { BaseUser } from "@repo/types";
 import { useUser } from "@clerk/nextjs";
+import { Meeting } from "@repo/types";
 
 const Schedule_Dialog = ({
   value,
   language,
   setLanguage,
+  setValue,
+  getRandomId,
+  setAllMeet,
+  allMeet,
 }: {
   value: string;
   language: string;
   setLanguage: React.Dispatch<React.SetStateAction<string>>;
+  setValue: React.Dispatch<React.SetStateAction<string>>;
+  getRandomId: () => string;
+  setAllMeet: React.Dispatch<React.SetStateAction<Meeting[]>>;
+  allMeet: Meeting[];
 }) => {
   const [selectedParticipants, setSelectedParticipants] = useState<BaseUser[]>(
     []
@@ -63,23 +72,34 @@ const Schedule_Dialog = ({
   );
 
   const handleSubmit = async () => {
-    await axios.post("http://localhost:8000/schedulemeet", {
-      replId: value,
-      interviewer: {
-        id: loggedUser?.id,
-        email: loggedUser?.email,
-        name: loggedUser?.name,
-      },
-      scheduleTime: time,
-      participants: [...selectedParticipants, loggedUser],
-    });
-    const res2 = await axios.post("http://localhost:8000/project", {
-      replId: value,
-      language: language,
-    });
+    try {
+      const newMeet = await axios.post("http://localhost:8000/schedulemeet", {
+        replId: value,
+        interviewer: {
+          id: loggedUser?.id,
+          email: loggedUser?.email,
+          name: loggedUser?.name,
+        },
+        scheduleTime: time,
+        participants: [...selectedParticipants, loggedUser],
+      });
+
+      setAllMeet([...allMeet, newMeet.data.newMeet]);
+
+      await axios.post("http://localhost:8000/project", {
+        replId: value,
+        language: language,
+      });
+    } catch (error) {
+      console.log("Error while schedule meet, or in /project", error);
+    }
   };
 
   const handleScheduling = async () => {
+    setValue(getRandomId());
+    setTime(new Date().toISOString());
+    setLanguage("");
+    setSelectedParticipants([]);
     try {
       const res = await axios.get("http://localhost:8000/allUsers");
       setParticipants(res.data.allUsers);
@@ -87,7 +107,6 @@ const Schedule_Dialog = ({
       console.log("Error in setting all users", err);
     }
   };
-  console.log("time", time);
 
   return (
     <Dialog>
@@ -194,9 +213,11 @@ const Schedule_Dialog = ({
           </div>
         </div>
         <DialogFooter>
-          <Button type="submit" onClick={handleSubmit}>
-            Schedule
-          </Button>
+          <DialogClose>
+            <Button type="submit" onClick={handleSubmit}>
+              Schedule
+            </Button>
+          </DialogClose>
         </DialogFooter>
       </DialogContent>
     </Dialog>

@@ -32,7 +32,7 @@ export function DataTable<TData, TValue>({
   data,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([
-    { id: "Date_and_time", desc: false },
+    { id: "dateandTime", desc: false },
   ]);
 
   const table = useReactTable({
@@ -92,7 +92,7 @@ export function DataTable<TData, TValue>({
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  No meetings scheduled yet
                 </TableCell>
               </TableRow>
             )}
