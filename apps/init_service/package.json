@@ -4,7 +4,6 @@
   "main": "index.js",
   "scripts": {
     "build": "esbuild src/index.ts --platform=node --bundle --outdir=dist",
-    "dev": "esbuild src/index.ts --platform=node --bundle --outdir=dist && node dist/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
