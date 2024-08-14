@@ -40,7 +40,9 @@ export default function DemoPage() {
   useEffect(() => {
     const getUserMeet = async () => {
       try {
-        const res = await axios.get("http://localhost:8000/allMeet");
+        const res = await axios.get(
+          "http://intervue.prohire.rishavrtwt.tech/init-service/allMeet"
+        );
         console.log(res.data.allmeet);
         setAllMeet(res.data.allmeet);
       } catch (error) {

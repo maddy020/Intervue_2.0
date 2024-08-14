@@ -1,49 +1,42 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: intervue
+  name: prohire
   labels:
-    app: intervue
+    app: prohire
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: intervue
+      app: prohire
   template:
     metadata:
       labels:
-        app: intervue
+        app: prohire
     spec:
       containers:
-        - name: intervue-landing
-          image: rishavrtwt/intervue_2.0:latest
+        - name: init-service
+          image: rishavrtwt/intervue_init_service:latest
           ports:
-            - containerPort: 3000
-            - containerPort: 3002
-            - containerPort: 5173
             - containerPort: 8000
+        - name: orchestration
+          image: rishavrtwt/intervue_orchestration:latest
+          ports:
+            - containerPort: 3002
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: intervue
+  name: prohire
 spec:
   selector:
-    app: intervue
+    app: prohire
   ports:
-    - protocol: TCP
-      name: landing
-      port: 3000
-      targetPort: 3000
     - protocol: TCP
       name: orchestration
       port: 3002
       targetPort: 3002
-    - protocol: TCP
-      name: frontend
-      port: 5173
-      targetPort: 5173
     - protocol: TCP
       name: init-service
       port: 8000
@@ -53,26 +46,26 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: intervue
+  name: prohire
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   ingressClassName: nginx
   rules:
-    - host: intervue.collabiq.rishavrtwt.tech
+    - host: intervue.prohire.rishavrtwt.tech
       http:
         paths:
-          - path: /
+          - path: /orchestration
             pathType: Prefix
             backend:
               service:
-                name: intervue
+                name: prohire
                 port:
-                  number: 3000
-          - path: /collab
+                  number: 3002
+          - path: /init-service
             pathType: Prefix
             backend:
               service:
-                name: intervue
+                name: prohire
                 port:
-                  number: 5173
+                  number: 8000

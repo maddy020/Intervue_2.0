@@ -73,23 +73,29 @@ const Schedule_Dialog = ({
 
   const handleSubmit = async () => {
     try {
-      const newMeet = await axios.post("http://localhost:8000/schedulemeet", {
-        replId: value,
-        interviewer: {
-          id: loggedUser?.id,
-          email: loggedUser?.email,
-          name: loggedUser?.name,
-        },
-        scheduleTime: time,
-        participants: [...selectedParticipants, loggedUser],
-      });
+      const newMeet = await axios.post(
+        "http://intervue.prohire.rishavrtwt.tech/init-service/schedulemeet",
+        {
+          replId: value,
+          interviewer: {
+            id: loggedUser?.id,
+            email: loggedUser?.email,
+            name: loggedUser?.name,
+          },
+          scheduleTime: time,
+          participants: [...selectedParticipants, loggedUser],
+        }
+      );
 
       setAllMeet([...allMeet, newMeet.data.newMeet]);
 
-      await axios.post("http://localhost:8000/project", {
-        replId: value,
-        language: language,
-      });
+      await axios.post(
+        "http://intervue.prohire.rishavrtwt.tech/init-service/project",
+        {
+          replId: value,
+          language: language,
+        }
+      );
     } catch (error) {
       console.log("Error while schedule meet, or in /project", error);
     }
@@ -101,7 +107,9 @@ const Schedule_Dialog = ({
     setLanguage("");
     setSelectedParticipants([]);
     try {
-      const res = await axios.get("http://localhost:8000/allUsers");
+      const res = await axios.get(
+        "http://intervue.prohire.rishavrtwt.tech/init-service/allUsers"
+      );
       setParticipants(res.data.allUsers);
     } catch (err) {
       console.log("Error in setting all users", err);

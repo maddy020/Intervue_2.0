@@ -175,6 +175,8 @@ app.delete("/deleteMeet/:id", async (req, res) => {
 app.listen(8000, async () => {
   console.log("App is running on port 8000");
   setTimeout(async () => {
-    await axios.post("http://localhost:3002/startWorker");
+    await axios.post(
+      "http://intervue.prohire.rishavrtwt.tech/orchestration/startWorker"
+    );
   }, 10000);
 });
