@@ -1,5 +1,4 @@
 "use client";
-import { DialogDemo } from "../appComponents/dialogBox";
 import { useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import axios from "axios";
