@@ -1,21 +1,28 @@
-FROM node:20-alpine
+FROM node:lts-buster-slim
 
 # Set the working directory in the container
 WORKDIR /usr/src/app
 
-# Copy the entire monorepo into the container
-COPY . .
+RUN apt-get update && apt-get install -y python3 make g++ && rm -rf /var/lib/apt/lists/*
+ENV PYTHON=/usr/bin/python3
 
-# Install dependencies
+# Copy package.json and package-lock.json (if available)
+COPY package*.json ./
+
+# Install root dependencies
 RUN npm install
 
-# Generate Prisma client
+# Copy all other necessary files
+COPY . .
+
+# Install additional dependencies specific to subprojects
+RUN cd apps/init_service && npm install --save-exact --save-dev esbuild
+RUN cd apps/orchestration && npm install -g typescript 
+
+# Generate Prisma Client
 RUN cd packages/prismaClient && npx prisma generate
 
-# Expose ports for both applications
-EXPOSE 4000
+# Ensure all binaries are accessible in PATH
+RUN npm install
 
-WORKDIR /usr/src/app
-
-# Command to start both services
-CMD ["npm", "run", "dev"]
+CMD ["npm", "run", "dev:docker"]

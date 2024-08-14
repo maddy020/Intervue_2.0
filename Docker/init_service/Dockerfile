@@ -1,16 +1,14 @@
-FROM node:20-alpine
+FROM node:lts-buster-slim
 
 WORKDIR /usr/src/app
 
-COPY ../packages /usr/src/app/packages
-COPY ../apps/init_service /usr/src/app/apps/init_service
+COPY ../../packages /usr/src/app/packages
+COPY ../../apps/init_service /usr/src/app/apps/init_service
 
 RUN cd packages/prismaClient && npx prisma generate
-COPY package.json /usr/src/app/package.json
-# COPY pnpm-lock.yaml /usr/src/app/pnpm-lock.yaml
-# COPY pnpm-workspace.yaml /usr/src/app/pnpm-workspace.yaml
-COPY turbo.json /usr/src/app/turbo.json
-COPY tsconfig.json /usr/src/app/tsconfig.json
+
+COPY ../../package.json /usr/src/app/package.json
+COPY ../../turbo.json /usr/src/app/turbo.json
 
 # Install dependencies
 RUN npm install

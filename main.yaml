@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: intervue
+  labels:
+    app: intervue
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: intervue
+  template:
+    metadata:
+      labels:
+        app: intervue
+    spec:
+      containers:
+        - name: intervue-landing
+          image: rishavrtwt/intervue_2.0:latest
+          ports:
+            - containerPort: 3000
+            - containerPort: 3002
+            - containerPort: 5173
+            - containerPort: 8000
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: intervue
+spec:
+  selector:
+    app: intervue
+  ports:
+    - protocol: TCP
+      name: landing
+      port: 3000
+      targetPort: 3000
+    - protocol: TCP
+      name: orchestration
+      port: 3002
+      targetPort: 3002
+    - protocol: TCP
+      name: frontend
+      port: 5173
+      targetPort: 5173
+    - protocol: TCP
+      name: init-service
+      port: 8000
+      targetPort: 8000
+  type: ClusterIP
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: intervue
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: intervue.collabiq.rishavrtwt.tech
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: intervue
+                port:
+                  number: 3000
+          - path: /collab
+            pathType: Prefix
+            backend:
+              service:
+                name: intervue
+                port:
+                  number: 5173

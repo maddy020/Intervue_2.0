@@ -1,17 +1,13 @@
-FROM node:20-alpine
+FROM node:lts-buster-slim
 
 # Set the working directory in the container
 WORKDIR /usr/src/app
 
 # Copy the entire monorepo into the container
-COPY ../packages /usr/src/app/packages
-COPY ../apps/frontend /usr/src/app/apps/frontend
-COPY package.json /usr/src/app/package.json
-# COPY pnpm-lock.yaml /usr/src/app/pnpm-lock.yaml
-# COPY pnpm-workspace.yaml /usr/src/app/pnpm-workspace.yaml
-COPY turbo.json /usr/src/app/turbo.json
-COPY tsconfig.json /usr/src/app/tsconfig.json
-
+COPY ../../packages /usr/src/app/packages
+COPY ../../apps/frontend /usr/src/app/apps/frontend
+COPY ../../package.json /usr/src/app/package.json
+COPY ../../turbo.json /usr/src/app/turbo.json
 
 # Install dependencies
 RUN npm install

@@ -5,7 +5,9 @@
     "build": "turbo build",
     "dev": "turbo dev",
     "lint": "turbo lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "dev:docker": "npm run prisma:docker && npm run dev",
+    "prisma:docker": "cd packages/prismaClient && npx prisma generate && npx prisma db push --force-reset"
   },
   "devDependencies": {
     "prettier": "^3.2.5",

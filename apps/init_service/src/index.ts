@@ -5,6 +5,7 @@ import { copyS3Folder } from "@repo/aws_utils";
 import { AccessToken } from "livekit-server-sdk";
 import { Queue } from "bullmq";
 import prisma from "@repo/prismaclient";
+import axios from "axios";
 
 const app = express();
 const queue = new Queue("Intervue", {
@@ -173,7 +174,7 @@ app.delete("/deleteMeet/:id", async (req, res) => {
 
 app.listen(8000, async () => {
   console.log("App is running on port 8000");
-  // setTimeout(async () => {
-  //   await axios.post("http://localhost:3002/startWorker");
-  // }, 10000);
+  setTimeout(async () => {
+    await axios.post("http://localhost:3002/startWorker");
+  }, 10000);
 });
