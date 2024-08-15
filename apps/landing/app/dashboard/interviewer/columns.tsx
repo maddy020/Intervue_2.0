@@ -30,7 +30,7 @@ function MeetingLinkCell({
     async function solve() {
       try {
         const res1 = await axios.get(
-          `http://intervue.prohire.rishavrtwt.tech/init-service/getToken?replId=${value}&username=${username}`
+          `https://intervue.prohire.rishavrtwt.tech/init-service/getToken?replId=${value}&username=${username}`
         );
 
         setToken(res1.data.token);
@@ -59,10 +59,10 @@ const handleDeleteMeeting = async (
 ) => {
   try {
     await axios.delete(
-      `http://intervue.prohire.rishavrtwt.tech/init-service/deleteMeet/${meetingId}`
+      `https://intervue.prohire.rishavrtwt.tech/init-service/deleteMeet/${meetingId}`
     );
     const res = await axios.get(
-      "http://intervue.prohire.rishavrtwt.tech/init-service/allMeet"
+      "https://intervue.prohire.rishavrtwt.tech/init-service/allMeet"
     );
     setAllMeet(res.data.allmeet);
   } catch (error) {

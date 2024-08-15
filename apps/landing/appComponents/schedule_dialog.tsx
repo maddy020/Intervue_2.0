@@ -74,7 +74,7 @@ const Schedule_Dialog = ({
   const handleSubmit = async () => {
     try {
       const newMeet = await axios.post(
-        "http://intervue.prohire.rishavrtwt.tech/init-service/schedulemeet",
+        "https://intervue.prohire.rishavrtwt.tech/init-service/schedulemeet",
         {
           replId: value,
           interviewer: {
@@ -90,7 +90,7 @@ const Schedule_Dialog = ({
       setAllMeet([...allMeet, newMeet.data.newMeet]);
 
       await axios.post(
-        "http://intervue.prohire.rishavrtwt.tech/init-service/project",
+        "https://intervue.prohire.rishavrtwt.tech/init-service/project",
         {
           replId: value,
           language: language,
@@ -108,7 +108,7 @@ const Schedule_Dialog = ({
     setSelectedParticipants([]);
     try {
       const res = await axios.get(
-        "http://intervue.prohire.rishavrtwt.tech/init-service/allUsers"
+        "https://intervue.prohire.rishavrtwt.tech/init-service/allUsers"
       );
       setParticipants(res.data.allUsers);
     } catch (err) {

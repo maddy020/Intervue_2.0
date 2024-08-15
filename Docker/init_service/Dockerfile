@@ -13,6 +13,10 @@ COPY ../../turbo.json /usr/src/app/turbo.json
 # Install dependencies
 RUN npm install
 
+COPY ../../node_modules/.prisma /usr/src/app/apps/init_service/node_modules/.prisma
+
+RUN npm install
+
 # Expose ports for both applications
 EXPOSE 8000
 

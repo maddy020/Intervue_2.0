@@ -1,46 +1,72 @@
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: prohire
+  name: init-service
   labels:
-    app: prohire
+    app: init-service
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: prohire
+      app: init-service
   template:
     metadata:
       labels:
-        app: prohire
+        app: init-service
     spec:
       containers:
         - name: init-service
           image: rishavrtwt/intervue_init_service:latest
           ports:
             - containerPort: 8000
-        - name: orchestration
-          image: rishavrtwt/intervue_orchestration:latest
-          ports:
-            - containerPort: 3002
-
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: prohire
+  name: init-service
 spec:
   selector:
-    app: prohire
+    app: init-service
   ports:
     - protocol: TCP
-      name: orchestration
-      port: 3002
-      targetPort: 3002
-    - protocol: TCP
-      name: init-service
       port: 8000
       targetPort: 8000
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orchestration
+  labels:
+    app: orchestration
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: orchestration
+  template:
+    metadata:
+      labels:
+        app: orchestration
+    spec:
+      containers:
+        - name: orchestration
+          image: rishavrtwt/intervue_orchestration:latest
+          ports:
+            - containerPort: 3002
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: orchestration
+spec:
+  selector:
+    app: orchestration
+  ports:
+    - protocol: TCP
+      port: 3002
+      targetPort: 3002
   type: ClusterIP
 ---
 apiVersion: networking.k8s.io/v1
@@ -49,8 +75,13 @@ metadata:
   name: prohire
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
 spec:
   ingressClassName: nginx
+  tls:
+    - hosts:
+        - intervue.prohire.rishavrtwt.tech
+      secretName: my-tls-secret
   rules:
     - host: intervue.prohire.rishavrtwt.tech
       http:
@@ -59,13 +90,13 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: prohire
+                name: orchestration
                 port:
                   number: 3002
           - path: /init-service
             pathType: Prefix
             backend:
               service:
-                name: prohire
+                name: init-service
                 port:
                   number: 8000
