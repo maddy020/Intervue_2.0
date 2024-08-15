@@ -5,12 +5,9 @@ console.log("Worker initiated");
 
 const requestHandler = async (job: Job) => {
   try {
-    const res = await axios.post(
-      "https://intervue.prohire.rishavrtwt.tech/orchestration/start",
-      {
-        replId: job.data.data.replId as string,
-      }
-    );
+    const res = await axios.post("http://orchestration:3002/start", {
+      replId: job.data.data.replId as string,
+    });
     console.log(res);
   } catch (error) {
     console.log("Error in creating the worker", error);
