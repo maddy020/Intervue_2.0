@@ -81,7 +81,7 @@ spec:
     - host: api.intervue.200xdevs.works
       http:
         paths:
-          - path: /init-service
+          - path: /
             pathType: Prefix
             backend:
               service:

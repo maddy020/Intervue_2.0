@@ -74,7 +74,7 @@ const Schedule_Dialog = ({
   const handleSubmit = async () => {
     try {
       const newMeet = await axios.post(
-        "https://api.intervue.200xdevs.works/init-service/schedulemeet",
+        "https://api.intervue.200xdevs.works/schedulemeet",
         {
           replId: value,
           interviewer: {
@@ -89,13 +89,10 @@ const Schedule_Dialog = ({
 
       setAllMeet([...allMeet, newMeet.data.newMeet]);
 
-      await axios.post(
-        "https://api.intervue.200xdevs.works/init-service/project",
-        {
-          replId: value,
-          language: language,
-        }
-      );
+      await axios.post("https://api.intervue.200xdevs.works/project", {
+        replId: value,
+        language: language,
+      });
     } catch (error) {
       console.log("Error while schedule meet, or in /project", error);
     }
@@ -108,7 +105,7 @@ const Schedule_Dialog = ({
     setSelectedParticipants([]);
     try {
       const res = await axios.get(
-        "https://api.intervue.200xdevs.works/init-service/allUsers"
+        "https://api.intervue.200xdevs.works/allUsers"
       );
       setParticipants(res.data.allUsers);
     } catch (err) {
