@@ -75,24 +75,12 @@ metadata:
   name: prohire
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
 spec:
   ingressClassName: nginx
-  tls:
-    - hosts:
-        - intervue.prohire.rishavrtwt.tech
-      secretName: my-tls-secret
   rules:
-    - host: intervue.prohire.rishavrtwt.tech
+    - host: api.intervue.200xdevs.works
       http:
         paths:
-          - path: /orchestration
-            pathType: Prefix
-            backend:
-              service:
-                name: orchestration
-                port:
-                  number: 3002
           - path: /init-service
             pathType: Prefix
             backend:
