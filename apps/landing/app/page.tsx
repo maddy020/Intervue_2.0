@@ -7,7 +7,7 @@ export default function Home() {
   useEffect(() => {
     if (isSignedIn) {
       axios
-        .post("https://api.intervue.200xdevs.works/addUser", {
+        .post("http://intervue.initservice.rishavrtwt.tech/addUser", {
           email: user.primaryEmailAddress?.emailAddress,
           name: user.fullName,
         })

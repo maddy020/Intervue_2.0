@@ -7,7 +7,7 @@ COPY ../../package.json /usr/src/app/package.json
 COPY ../../turbo.json /usr/src/app/turbo.json
 
 # Install dependencies
-RUN npm install
+RUN npm i --save-dev @types/cors && npm install
 
 # Expose ports for both applications
 EXPOSE 3002

@@ -13,7 +13,9 @@ function useSocket() {
   useEffect(() => {
     try {
       const replId = localStorage.getItem("replId");
-      const newSocket = io(`ws://${replId}.api.intervue.200xdevs.works`);
+      const newSocket = io(
+        `ws://${replId}.intervue.initservice.rishavrtwt.tech`
+      );
       setSocket(newSocket);
       return () => {
         newSocket.disconnect();

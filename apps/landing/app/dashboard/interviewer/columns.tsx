@@ -30,7 +30,7 @@ function MeetingLinkCell({
     async function solve() {
       try {
         const res1 = await axios.get(
-          `https://api.intervue.200xdevs.works/getToken?replId=${value}&username=${username}`
+          `http://intervue.initservice.rishavrtwt.tech/getToken?replId=${value}&username=${username}`
         );
 
         setToken(res1.data.token);
@@ -59,9 +59,11 @@ const handleDeleteMeeting = async (
 ) => {
   try {
     await axios.delete(
-      `https://api.intervue.200xdevs.works/deleteMeet/${meetingId}`
+      `http://intervue.initservice.rishavrtwt.tech/deleteMeet/${meetingId}`
     );
-    const res = await axios.get("https://api.intervue.200xdevs.works/allMeet");
+    const res = await axios.get(
+      "http://intervue.initservice.rishavrtwt.tech/allMeet"
+    );
     setAllMeet(res.data.allmeet);
   } catch (error) {
     console.log("Error while deleting meeting", error);

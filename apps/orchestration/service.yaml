@@ -71,7 +71,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: service_name.api.intervue.200xdevs.works
+    - host: service_name.interview.rishavrtwt.tech
       http:
         paths:
           - path: /
