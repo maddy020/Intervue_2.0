@@ -1,6 +1,8 @@
 "use client";
 import { useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
+import Appbar from "../appComponents/Appbar";
+import HeroSection from "../appComponents/HeroSection";
 import axios from "axios";
 export default function Home() {
   const { isSignedIn, user } = useUser();
@@ -16,9 +18,9 @@ export default function Home() {
     }
   }, [isSignedIn, user]);
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between pt-10">
-      <nav>{/* <DialogDemo /> */}</nav>
-      <h1>Go to /dashboard/interviewer</h1>
+    <main className="flex min-h-screen">
+      <Appbar />
+      <HeroSection />
     </main>
   );
 }
