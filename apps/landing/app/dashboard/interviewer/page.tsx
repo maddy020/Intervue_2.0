@@ -52,29 +52,35 @@ export default function DemoPage() {
   }, []);
 
   return (
-    <div className="border h-[56rem] mx-4 my-4">
+    <div className="border-2 h-[56rem] mx-4 my-4 rounded-3xl">
       <Header />
-      <Schedule_Dialog
-        value={value}
-        language={language}
-        setLanguage={setLanguage}
-        setValue={setValue}
-        getRandomId={getRandomId}
-        setAllMeet={setAllMeet}
-        allMeet={allMeet}
-      />
-      <DataTable
-        columns={columns(
-          value,
-          user.user?.fullName as string,
-          token,
-          setToken,
-          setAllMeet
-        )}
-        data={allMeet.map((meet) => {
-          return meet;
-        })}
-      />
+      <div className="flex justify-end">
+        <div className="border w-[80%] flex justify-center border-r-0 h-[47rem]">
+          <div className="w-[90%] py-5">
+            <Schedule_Dialog
+              value={value}
+              language={language}
+              setLanguage={setLanguage}
+              setValue={setValue}
+              getRandomId={getRandomId}
+              setAllMeet={setAllMeet}
+              allMeet={allMeet}
+            />
+            <DataTable
+              columns={columns(
+                value,
+                user.user?.fullName as string,
+                token,
+                setToken,
+                setAllMeet
+              )}
+              data={allMeet.map((meet) => {
+                return meet;
+              })}
+            />
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
