@@ -7,7 +7,7 @@ export default function Home() {
   useEffect(() => {
     if (isSignedIn) {
       axios
-        .post("http://intervue.initservice.rishavrtwt.tech/addUser", {
+        .post("http://localhost:8000/addUser", {
           email: user.primaryEmailAddress?.emailAddress,
           name: user.fullName,
         })

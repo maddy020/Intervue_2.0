@@ -21,7 +21,7 @@ export default function RootLayout({
       publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
     >
       <html lang="en" className="m-0 p-0 box-border">
-        <body className={`${inter.className} w-full h-screen px-4`}>
+        <body className={`${inter.className} w-full h-screen overflow-hidden`}>
           <main>{children}</main>
         </body>
       </html>

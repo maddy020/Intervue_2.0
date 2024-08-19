@@ -7,6 +7,7 @@ import Schedule_Dialog from "@/appComponents/schedule_dialog";
 import { useUser } from "@clerk/nextjs";
 import { Meeting } from "@repo/types";
 import axios from "axios";
+import Header from "./header";
 
 function getRandomId() {
   const SLUG_WORKS = [
@@ -40,9 +41,7 @@ export default function DemoPage() {
   useEffect(() => {
     const getUserMeet = async () => {
       try {
-        const res = await axios.get(
-          "http://intervue.initservice.rishavrtwt.tech/allMeet"
-        );
+        const res = await axios.get("http://localhost:8000/allMeet");
         console.log(res.data.allmeet);
         setAllMeet(res.data.allmeet);
       } catch (error) {
@@ -53,10 +52,8 @@ export default function DemoPage() {
   }, []);
 
   return (
-    <div className="container mx-auto py-10">
-      <h1 className="text-center text-2xl mb-8 underline">
-        Interviewer Dashboard
-      </h1>
+    <div className="border h-[56rem] mx-4 my-4">
+      <Header />
       <Schedule_Dialog
         value={value}
         language={language}

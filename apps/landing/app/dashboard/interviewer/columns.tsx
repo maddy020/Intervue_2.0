@@ -30,7 +30,7 @@ function MeetingLinkCell({
     async function solve() {
       try {
         const res1 = await axios.get(
-          `http://intervue.initservice.rishavrtwt.tech/getToken?replId=${value}&username=${username}`
+          `http://localhost:8000/getToken?replId=${value}&username=${username}`
         );
 
         setToken(res1.data.token);
@@ -44,7 +44,7 @@ function MeetingLinkCell({
 
   return (
     <Link
-      href={`https://intervue-2-0-frontend-pi.vercel.app/coding?replId=${replId}&token=${token}`}
+      href={`http://localhost:5173/coding?replId=${replId}&token=${token}`}
       className="font-medium underline cursor-pointer"
       target="_blank"
     >
@@ -58,12 +58,8 @@ const handleDeleteMeeting = async (
   setAllMeet: React.Dispatch<React.SetStateAction<Meeting[]>>
 ) => {
   try {
-    await axios.delete(
-      `http://intervue.initservice.rishavrtwt.tech/deleteMeet/${meetingId}`
-    );
-    const res = await axios.get(
-      "http://intervue.initservice.rishavrtwt.tech/allMeet"
-    );
+    await axios.delete(`http://localhost:8000/deleteMeet/${meetingId}`);
+    const res = await axios.get("http://localhost:8000/allMeet");
     setAllMeet(res.data.allmeet);
   } catch (error) {
     console.log("Error while deleting meeting", error);

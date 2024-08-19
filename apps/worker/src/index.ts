@@ -5,7 +5,7 @@ console.log("Worker initiated");
 
 const requestHandler = async (job: Job) => {
   try {
-    const res = await axios.post("http://orchestration:3002/start", {
+    const res = await axios.post("http://localhost:3002/start", {
       replId: job.data.data.replId as string,
     });
     console.log(res);
