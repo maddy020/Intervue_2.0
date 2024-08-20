@@ -30,7 +30,6 @@ export default function Home() {
           const res = await axios.get(
             `http://localhost:8000/currentUser/${email}`
           );
-          console.log(res.data.currentUser);
           setCurrentUser(res.data.currentUser);
         }
       } catch (error) {

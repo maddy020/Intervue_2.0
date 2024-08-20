@@ -66,6 +66,7 @@ export const CodingPage = () => {
 export const CodingComp = ({ token }: { token: string }) => {
   const socket = useSocket();
   const [loaded, setLoaded] = useState(false);
+  const [currentFile, setCurrentFile] = useState<File>();
   const [selectedFile, setSelectedFile] = useState<File | undefined>(undefined);
   const [fileStructure, setFileStructure] = useState<RemoteFile[]>([]);
   const isDraggingRef = useRef(false);
@@ -86,6 +87,35 @@ export const CodingComp = ({ token }: { token: string }) => {
       });
     }
   }, [socket]);
+
+  useEffect(() => {
+    if (socket) {
+      socket?.on(
+        "fetchDirBroadcaste",
+        ({ data, id }: { data: RemoteFile[]; id: string }) => {
+          console.log("socketid", id);
+          setFileStructure((prev) => {
+            const allFiles = [...prev, ...data];
+            return allFiles.filter(
+              (file, index, self) =>
+                index === self.findIndex((f) => f.path === file.path)
+            );
+          });
+        }
+      );
+
+      socket?.on(
+        "fetchContentBroadcaste",
+        ({ data, file }: { data: string; file: File }) => {
+          console.log("fetchContentBroadcaste", data);
+          console.log("fetchContentBroadcasteFile", file);
+          file.content = data;
+          setSelectedFile(file);
+        }
+      );
+    }
+  }, [socket]);
+
   const onSelect = (file: File) => {
     if (file.type === FileType.DIRECTORY) {
       socket?.emit("fetchDir", file.path, (data: RemoteFile[]) => {
@@ -97,29 +127,16 @@ export const CodingComp = ({ token }: { token: string }) => {
           );
         });
       });
-
-      socket?.on(
-        "fetchDirBroadcaste",
-        ({ data, id }: { data: File[]; id: string }) => {
-          console.log(id);
-          setFileStructure((prev) => {
-            const allFiles = [...prev, ...data];
-            return allFiles.filter(
-              (file, index, self) =>
-                index === self.findIndex((f) => f.path === file.path)
-            );
-          });
+    } else {
+      setCurrentFile(file);
+      socket?.emit(
+        "fetchContent",
+        { path: file.path, file: file },
+        (data: string) => {
+          file.content = data;
+          setSelectedFile(file);
         }
       );
-    } else {
-      socket?.emit("fetchContent", { path: file.path }, (data: string) => {
-        file.content = data;
-        setSelectedFile(file);
-      });
-      // socket?.on("fetchContentBroadcaste", (data: string) => {
-      //   file.content = data;
-      //   setSelectedFile(file);
-      // });
     }
   };
   if (!loaded) {

@@ -54,11 +54,13 @@ function MeetingLinkCell({
 
 const handleDeleteMeeting = async (
   meetingId: string,
-  setAllMeet: React.Dispatch<React.SetStateAction<Meeting[]>>
+  setAllMeet: React.Dispatch<React.SetStateAction<Meeting[]>>,
+  id: string | string[]
 ) => {
   try {
+    console.log("Deleting meeting with id", meetingId);
     await axios.delete(`http://localhost:8000/deleteMeet/${meetingId}`);
-    const res = await axios.get("http://localhost:8000/allMeet");
+    const res = await axios.get(`http://localhost:8000/allMeet/${id}`);
     setAllMeet(res.data.allmeet);
   } catch (error) {
     console.log("Error while deleting meeting", error);
@@ -68,7 +70,8 @@ const handleDeleteMeeting = async (
 
 export const columns = (
   username: string,
-  setAllMeet: React.Dispatch<React.SetStateAction<Meeting[]>>
+  setAllMeet: React.Dispatch<React.SetStateAction<Meeting[]>>,
+  id: string | string[]
 ): ColumnDef<Meeting>[] => [
   {
     accessorKey: "status",
@@ -119,7 +122,7 @@ export const columns = (
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem
-              onClick={() => handleDeleteMeeting(meeting.id, setAllMeet)}
+              onClick={() => handleDeleteMeeting(meeting.id, setAllMeet, id)}
               className="cursor-pointer"
             >
               Cancel Meeting

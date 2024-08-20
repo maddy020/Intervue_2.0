@@ -132,7 +132,7 @@ export default function DemoPage() {
               allMeet={allMeet}
             />
             <DataTable
-              columns={columns(user.user?.fullName as string, setAllMeet)}
+              columns={columns(user.user?.fullName as string, setAllMeet, id)}
               data={allMeet.map((meet) => {
                 return meet;
               })}

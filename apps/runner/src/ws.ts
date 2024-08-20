@@ -49,12 +49,17 @@ async function initHandler(socket: Socket, replId: string) {
 
   socket.on(
     "fetchContent",
-    async ({ path: filePath }: { path: string }, callback) => {
+    async (
+      { path: filePath, file }: { path: string; file: File },
+      callback
+    ) => {
       const fullPath = `/workspace/${filePath}`;
       const data = await fetchFileContent(fullPath);
+      console.log("file in runner", file);
       socket.broadcast.emit("fetchContentBroadcaste", {
         data: data,
         id: socket.id,
+        file: file,
       });
       callback(data);
     }
