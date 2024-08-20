@@ -16,35 +16,15 @@ import { Meeting } from "@repo/types";
 function MeetingLinkCell({
   value,
   username,
-  token,
-  setToken,
   replId,
 }: {
   value: string;
   username: string;
-  token: string;
-  setToken: React.Dispatch<React.SetStateAction<string>>;
   replId: string;
 }) {
-  useEffect(() => {
-    async function solve() {
-      try {
-        const res1 = await axios.get(
-          `http://localhost:8000/getToken?replId=${value}&username=${username}`
-        );
-
-        setToken(res1.data.token);
-      } catch (error) {
-        console.log("Error while fetching token", error);
-      }
-    }
-    solve();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value, username]);
-
   return (
     <Link
-      href={`http://localhost:5173/coding?replId=${replId}&token=${token}`}
+      href={`http://localhost:5173/coding?replId=${replId}&username=${username}`}
       className="font-medium underline cursor-pointer"
       target="_blank"
     >
@@ -70,8 +50,6 @@ const handleDeleteMeeting = async (
 export const columns = (
   value: string,
   username: string,
-  token: string,
-  setToken: React.Dispatch<React.SetStateAction<string>>,
   setAllMeet: React.Dispatch<React.SetStateAction<Meeting[]>>
 ): ColumnDef<Meeting>[] => [
   {
@@ -104,8 +82,6 @@ export const columns = (
       <MeetingLinkCell
         value={value}
         username={username}
-        token={token}
-        setToken={setToken}
         replId={row.original.roomId}
       />
     ),

@@ -34,7 +34,6 @@ export default function DemoPage() {
   // const data = await getData();
   const [language, setLanguage] = useState("");
   const [value, setValue] = useState(getRandomId());
-  const [token, setToken] = useState("");
   const user = useUser();
   const [allMeet, setAllMeet] = useState<Meeting[]>([]);
 
@@ -70,8 +69,6 @@ export default function DemoPage() {
               columns={columns(
                 value,
                 user.user?.fullName as string,
-                token,
-                setToken,
                 setAllMeet
               )}
               data={allMeet.map((meet) => {
