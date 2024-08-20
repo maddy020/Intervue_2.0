@@ -5,7 +5,20 @@ const Userbutton = () => {
   return (
     <>
       <SignedIn>
-        <UserButton />
+        <UserButton
+          appearance={{
+            elements: {
+              userButtonAvatarBox: {
+                width: "45px",
+                height: "45px",
+              },
+              userButtonOuterBox: {
+                width: "50px",
+                height: "50px",
+              },
+            },
+          }}
+        />
       </SignedIn>
       <SignedOut>
         <SignInButton />

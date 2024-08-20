@@ -5,7 +5,6 @@ import { copyS3Folder } from "@repo/aws_utils";
 import { AccessToken } from "livekit-server-sdk";
 import { Queue } from "bullmq";
 import prisma from "@repo/prismaclient";
-import axios from "axios";
 
 const app = express();
 const queue = new Queue("Intervue", {
@@ -75,6 +74,9 @@ app.post("/schedulemeet", async (req, res) => {
       },
       {
         delay: delay,
+        removeOnComplete: true,
+        removeOnFail: true,
+        jobId: replId,
       }
     );
     const p = participants.map((participant: { id: string }) => ({
@@ -119,22 +121,25 @@ app.get("/allUsers", async (req, res) => {
 app.post("/addUser", async (req, res) => {
   try {
     const { email, name } = req.body;
-    console.log(email);
-    console.log(name);
     await prisma.user.create({
       data: {
         name: name,
         email: email,
       },
     });
+    res.json({ status: "User added" });
   } catch (error) {
     console.error(error);
   }
 });
 
-app.get("/allMeet", async (req, res) => {
+app.get("/allMeet/:id", async (req, res) => {
   try {
+    const { id } = req.params;
     const allmeet = await prisma.meet.findMany({
+      where: {
+        userId: id,
+      },
       include: {
         participants: {
           include: {
@@ -149,9 +154,37 @@ app.get("/allMeet", async (req, res) => {
   }
 });
 
+app.get("/currentUser/:email", async (req, res) => {
+  try {
+    const { email } = req.params;
+    const currentUser = await prisma.user.findFirst({
+      where: {
+        email: email,
+      },
+    });
+    res.json({ currentUser });
+  } catch (error) {
+    console.log("Error in getting current user", error);
+  }
+});
+
 app.delete("/deleteMeet/:id", async (req, res) => {
   try {
     const { id } = req.params;
+
+    const replId = await prisma.meet.findFirst({
+      where: {
+        id: id,
+      },
+      select: {
+        roomId: true,
+      },
+    });
+
+    if (replId) {
+      await queue.remove(replId.roomId);
+      console.log(`Removed job with id ${replId.roomId}`);
+    }
 
     await prisma.meetsParticipants.deleteMany({
       where: {

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { use, useEffect } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -6,12 +6,12 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
 import axios from "axios";
 import { Meeting } from "@repo/types";
+import { useRouter } from "next/navigation";
 
 function MeetingLinkCell({
   value,
@@ -19,13 +19,16 @@ function MeetingLinkCell({
   token,
   setToken,
   replId,
+  dateandTime,
 }: {
   value: string;
   username: string;
   token: string;
   setToken: React.Dispatch<React.SetStateAction<string>>;
   replId: string;
+  dateandTime: string;
 }) {
+  const router = useRouter();
   useEffect(() => {
     async function solve() {
       try {
@@ -42,14 +45,34 @@ function MeetingLinkCell({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value, username]);
 
+  const handleMeetingJoin = async (
+    replId: string,
+    token: string,
+    dateandTime: string
+  ) => {
+    const currentTime = new Date();
+    const scheduledMeetingTime = new Date(dateandTime);
+
+    console.log(`Current time ${currentTime}`);
+    console.log(`Scheduled time ${scheduledMeetingTime}`);
+
+    if (currentTime < scheduledMeetingTime) {
+      alert("You cannot join the meeting before the scheduled date and time.");
+      return;
+    }
+
+    router.replace(
+      `http://localhost:5173/coding?replId=${replId}&token=${token}`
+    );
+  };
+
   return (
-    <Link
-      href={`http://localhost:5173/coding?replId=${replId}&token=${token}`}
-      className="font-medium underline cursor-pointer"
-      target="_blank"
+    <Button
+      onClick={() => handleMeetingJoin(replId, token, dateandTime)}
+      variant={"link"}
     >
       Join now
-    </Link>
+    </Button>
   );
 }
 
@@ -107,6 +130,7 @@ export const columns = (
         token={token}
         setToken={setToken}
         replId={row.original.roomId}
+        dateandTime={row.original.dateandTime}
       />
     ),
   },
@@ -124,15 +148,6 @@ export const columns = (
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem
-              onClick={() => {
-                console.log(`Reschedule meeting with ID: ${meeting.id}`);
-              }}
-              className="cursor-pointer"
-            >
-              Reschedule Meeting
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={() => handleDeleteMeeting(meeting.id, setAllMeet)}
               className="cursor-pointer"

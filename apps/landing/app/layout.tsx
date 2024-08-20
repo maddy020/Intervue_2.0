@@ -20,7 +20,9 @@ export default function RootLayout({
       publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
     >
       <html lang="en" className="m-0 p-0 box-border">
-        <body className={`${inter.className} h-screen overflow-y-hidden`}>
+        <body
+          className={`${inter.className} h-screen overflow-y-hidden text-lg`}
+        >
           <main className="h-screen relative">{children}</main>
         </body>
       </html>

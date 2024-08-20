@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+.hover-effect img {
+  filter: invert(0);
+}
+
+.hover-effect:hover img {
+  filter: invert(1);
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

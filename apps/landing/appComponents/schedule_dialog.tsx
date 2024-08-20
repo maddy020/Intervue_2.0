@@ -49,8 +49,6 @@ const Schedule_Dialog = ({
   const [filteredParticipants, setFilteredParticipants] = useState<BaseUser[]>(
     []
   );
-  const router = useRouter();
-
   const handleParticipantSelect = (participant: BaseUser) => {
     if (
       selectedParticipants.length < 3 &&
@@ -112,7 +110,7 @@ const Schedule_Dialog = ({
     <Dialog>
       <div className="flex justify-end">
         <DialogTrigger asChild>
-          <Button variant="outline" onClick={handleScheduling}>
+          <Button variant="default" onClick={handleScheduling}>
             Schedule Interview
           </Button>
         </DialogTrigger>
