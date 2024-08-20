@@ -43,7 +43,6 @@ export default function DemoPage() {
   // const data = await getData();
   const [language, setLanguage] = useState("");
   const [value, setValue] = useState(getRandomId());
-  const [token, setToken] = useState("");
   const user = useUser();
   const [allMeet, setAllMeet] = useState<Meeting[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -133,13 +132,7 @@ export default function DemoPage() {
               allMeet={allMeet}
             />
             <DataTable
-              columns={columns(
-                value,
-                user.user?.fullName as string,
-                token,
-                setToken,
-                setAllMeet
-              )}
+              columns={columns(user.user?.fullName as string, setAllMeet)}
               data={allMeet.map((meet) => {
                 return meet;
               })}
