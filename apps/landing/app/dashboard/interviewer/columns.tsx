@@ -1,4 +1,3 @@
-import { use, useEffect } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -8,47 +7,24 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import Link from "next/link";
 import axios from "axios";
 import { Meeting } from "@repo/types";
 import { useRouter } from "next/navigation";
 
 function MeetingLinkCell({
-  value,
-  username,
-  token,
-  setToken,
   replId,
   dateandTime,
+  username,
 }: {
-  value: string;
-  username: string;
-  token: string;
-  setToken: React.Dispatch<React.SetStateAction<string>>;
   replId: string;
   dateandTime: string;
+  username: string;
 }) {
   const router = useRouter();
-  useEffect(() => {
-    async function solve() {
-      try {
-        const res1 = await axios.get(
-          `http://localhost:8000/getToken?replId=${value}&username=${username}`
-        );
-
-        setToken(res1.data.token);
-      } catch (error) {
-        console.log("Error while fetching token", error);
-      }
-    }
-    solve();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value, username]);
-
   const handleMeetingJoin = async (
     replId: string,
-    token: string,
-    dateandTime: string
+    dateandTime: string,
+    username: string
   ) => {
     const currentTime = new Date();
     const scheduledMeetingTime = new Date(dateandTime);
@@ -62,13 +38,13 @@ function MeetingLinkCell({
     }
 
     router.replace(
-      `http://localhost:5173/coding?replId=${replId}&token=${token}`
+      `http://localhost:5173/coding?replId=${replId}&username=${username}`
     );
   };
 
   return (
     <Button
-      onClick={() => handleMeetingJoin(replId, token, dateandTime)}
+      onClick={() => handleMeetingJoin(replId, dateandTime, username)}
       variant={"link"}
     >
       Join now
@@ -91,10 +67,7 @@ const handleDeleteMeeting = async (
 };
 
 export const columns = (
-  value: string,
   username: string,
-  token: string,
-  setToken: React.Dispatch<React.SetStateAction<string>>,
   setAllMeet: React.Dispatch<React.SetStateAction<Meeting[]>>
 ): ColumnDef<Meeting>[] => [
   {
@@ -125,10 +98,7 @@ export const columns = (
     header: "Meeting Link",
     cell: ({ row }) => (
       <MeetingLinkCell
-        value={value}
         username={username}
-        token={token}
-        setToken={setToken}
         replId={row.original.roomId}
         dateandTime={row.original.dateandTime}
       />

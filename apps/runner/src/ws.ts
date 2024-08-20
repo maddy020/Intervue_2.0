@@ -41,6 +41,10 @@ async function initHandler(socket: Socket, replId: string) {
     const dirPath = `/workspace/${dir}`;
     const contents = await fetchDir(dirPath, dir);
     callback(contents);
+    socket.broadcast.emit("fetchDirBroadcaste", {
+      data: contents,
+      id: socket.id,
+    });
   });
 
   socket.on(
@@ -48,6 +52,10 @@ async function initHandler(socket: Socket, replId: string) {
     async ({ path: filePath }: { path: string }, callback) => {
       const fullPath = `/workspace/${filePath}`;
       const data = await fetchFileContent(fullPath);
+      socket.broadcast.emit("fetchContentBroadcaste", {
+        data: data,
+        id: socket.id,
+      });
       callback(data);
     }
   );
@@ -64,41 +72,14 @@ async function initHandler(socket: Socket, replId: string) {
       }
     }
   );
+  socket.on("terminalDataBroadcasted", async ({ data }: { data: string }) => {
+    console.log("data received in broadcast", data);
+    terminalManager.write(socket.id, data);
+  });
 
   socket.on("terminalData", async ({ data }: { data: string }) => {
-    commandBuffer += data;
-    console.log("data received", commandBuffer);
-    if (commandBuffer.includes("\x1B[D")) {
-      count++;
-      console.log("Left Key Pressed");
-    } else if (commandBuffer.includes("\x1B[C")) {
-      count--;
-      if (count < 0) count = 0;
-      console.log("Right Key Pressed");
-    } else if (commandBuffer.includes("\b")) {
-      console.log("inside the backspace");
-      const n = commandBuffer.length;
-      commandBuffer =
-        commandBuffer.slice(0, n - count) + commandBuffer.slice(n - count + 1);
-    } else if (commandBuffer.includes("\n")) {
-      count = 0;
-      const commands = commandBuffer.split("\n");
-      commandBuffer = commands.pop() || ""; // Retain any incomplete command
-
-      for (let command of commands) {
-        command = command.trim();
-        console.log("Received command:", command);
-
-        if (command.startsWith("mkdir")) {
-          console.log("Processing mkdir command:", command);
-          // Add mkdir logic here
-        } else if (command.startsWith("touch")) {
-          console.log("Processing touch command:", command);
-          // Add touch logic here
-        }
-      }
-    }
-
+    console.log("data received not in broadcast", data);
     terminalManager.write(socket.id, data);
+    socket.broadcast.emit("broadcast", { data: data, id: socket.id });
   });
 }

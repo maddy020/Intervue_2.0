@@ -12,7 +12,6 @@ const OPTIONS_TERM = {
     foreground: "#CCCCCC", // Light text color
   },
 };
-
 function ab2str(buf: ArrayBuffer) {
   return String.fromCharCode.apply(null, [...new Uint8Array(buf)]);
 }
@@ -35,7 +34,27 @@ const TerminalComponent = ({ socket }: { socket: Socket | null }) => {
 
     socket.emit("requestTerminal");
     socket.on("terminal", handler);
-
+    socket.on("broadcast", ({ data, id }: { data: string; id: string }) => {
+      if (id == socket.id) return;
+      term.write(data);
+      switch (data) {
+        case "\r":
+          socket.emit("terminalDataBroadcasted", { data: "\n" });
+          break;
+        case "\x7F":
+          socket.emit("terminalDataBroadcasted", { data: "\b" });
+          break;
+        case "\x1B[D":
+          socket.emit("terminalDataBroadcasted", { data: "\x1B[D" });
+          break;
+        case "\x1B[C":
+          socket.emit("terminalDataBroadcasted", { data: "\x1B[C" });
+          break;
+        default:
+          socket.emit("terminalDataBroadcasted", { data });
+          break;
+      }
+    });
     term.onData((data) => {
       switch (data) {
         case "\r":
@@ -58,6 +77,7 @@ const TerminalComponent = ({ socket }: { socket: Socket | null }) => {
 
     return () => {
       socket.off("terminal", handler);
+      socket.off("broadcast");
       term.dispose();
     };
   }, [terminalRef, socket]);

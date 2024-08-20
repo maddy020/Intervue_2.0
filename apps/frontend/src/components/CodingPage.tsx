@@ -7,6 +7,7 @@ import Output from "./Output";
 import { FileType, File, RemoteFile } from "@repo/types";
 import Interview from "./Interview";
 import Draggable from "react-draggable";
+import axios from "axios";
 
 function useSocket() {
   const [socket, setSocket] = useState<Socket | null>(null);
@@ -28,10 +29,27 @@ function useSocket() {
 export const CodingPage = () => {
   const isPodCreated = localStorage.getItem("replId") ? true : false;
   const [podCreated, setPodCreated] = useState(isPodCreated);
+  const [token, setToken] = useState("");
   const [searchParams] = useSearchParams();
   const replId = searchParams.get("replId") ?? "";
-  const token = searchParams.get("token") ?? "";
+  const username = searchParams.get("username") ?? "";
   console.log(token);
+  useEffect(() => {
+    async function solve() {
+      try {
+        const res1 = await axios.get(
+          `http://localhost:8000/getToken?replId=${replId}&username=${username}`
+        );
+
+        setToken(res1.data.token);
+      } catch (error) {
+        console.log("Error while fetching token", error);
+      }
+    }
+    solve();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [replId]);
+
   useEffect(() => {
     if (replId && !podCreated) {
       localStorage.setItem("replId", replId);
@@ -79,11 +97,29 @@ export const CodingComp = ({ token }: { token: string }) => {
           );
         });
       });
+
+      socket?.on(
+        "fetchDirBroadcaste",
+        ({ data, id }: { data: File[]; id: string }) => {
+          console.log(id);
+          setFileStructure((prev) => {
+            const allFiles = [...prev, ...data];
+            return allFiles.filter(
+              (file, index, self) =>
+                index === self.findIndex((f) => f.path === file.path)
+            );
+          });
+        }
+      );
     } else {
       socket?.emit("fetchContent", { path: file.path }, (data: string) => {
         file.content = data;
         setSelectedFile(file);
       });
+      // socket?.on("fetchContentBroadcaste", (data: string) => {
+      //   file.content = data;
+      //   setSelectedFile(file);
+      // });
     }
   };
   if (!loaded) {
