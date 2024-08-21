@@ -46,11 +46,11 @@ const FileDiv = ({
   const depth = file.depth;
   return (
     <div
-      className={`flex items-center pl-[${depth * 16}px] bg-[${isSelected ? "#242424" : "transparent"}] hover:cursor-pointer bg-[#242424]`}
+      className={`flex items-center pl-[${depth * 16}px] bg-[${isSelected ? "#2b2e46" : "transparent"}] hover:cursor-pointer hover:bg-[#2b2e46] hover:rounded-md py-2`}
       onClick={onClick}
     >
       <FileIcon name={icon} extension={file.name.split(".").pop() || ""} />
-      <span className="ml-1">{file.name}</span>
+      <span className="ml-3 text-base">{file.name}</span>
     </div>
   );
 };
@@ -120,5 +120,5 @@ const FileIcon = ({
   extension?: string;
 }) => {
   const icon = getIcon(extension || "", name || "");
-  return <span className="flex w-24 h-24 justi">{icon}</span>;
+  return <span className="pl-2">{icon}</span>;
 };

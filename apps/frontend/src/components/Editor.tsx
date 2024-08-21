@@ -24,9 +24,9 @@ const Editor = ({
     if (!selectedFile) {
       onSelect(rootDir.files[0]);
     }
-  }, [selectedFile]);
+  }, [onSelect, rootDir.files, selectedFile]);
   return (
-    <div className="flex gap-4">
+    <div className="flex">
       <Sidebar>
         <FileTree
           rootDir={rootDir}
@@ -34,7 +34,12 @@ const Editor = ({
           onSelect={onSelect}
         />
       </Sidebar>
-      <Code socket={socket} selectedFile={selectedFile} />
+      <div className="mt-3">
+        <div className="border-b-2 border-b-gray-400">
+          <span className="text-base text-gray-400">{selectedFile?.name}</span>
+        </div>
+        <Code socket={socket} selectedFile={selectedFile} />
+      </div>
     </div>
   );
 };

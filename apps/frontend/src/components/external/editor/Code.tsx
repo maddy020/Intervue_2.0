@@ -48,13 +48,14 @@ const Code = ({
   return (
     <>
       <Editor
-        width="50vw"
-        height="100vh"
+        width="45.5vw"
+        height="95vh"
         language={language}
         theme="vs-dark"
         loading={"Loading..."}
         value={code}
         onChange={handleChange}
+        className="py-1"
       />
     </>
   );

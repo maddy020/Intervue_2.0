@@ -8,8 +8,9 @@ const OPTIONS_TERM = {
   cursorBlink: true,
   cols: 200,
   theme: {
-    background: "#1E1E1E", // Dark background color
-    foreground: "#CCCCCC", // Light text color
+    background: "#1E1E1E",
+    foreground: "#fffff",
+    selection: "#3E4451",
   },
 };
 function ab2str(buf: ArrayBuffer) {
@@ -84,12 +85,10 @@ const TerminalComponent = ({ socket }: { socket: Socket | null }) => {
 
   return (
     <div
+      className="terminal-container"
       style={{
-        width: "40vw", // Adjust width as needed
-        height: "50vh", // Adjust height as needed
-        textAlign: "left",
-        fontFamily: "monospace",
-        fontSize: "30px",
+        width: "40vw",
+        height: "50vh",
         padding: "10px",
       }}
       ref={terminalRef}

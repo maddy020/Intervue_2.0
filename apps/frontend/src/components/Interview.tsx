@@ -1,7 +1,13 @@
 import { LiveKitRoom, VideoConference } from "@livekit/components-react";
 import "@livekit/components-styles";
 
-const Interview = ({ token }: { token: string }) => {
+const Interview = ({
+  token,
+  className,
+}: {
+  token: string;
+  className?: string;
+}) => {
   return (
     <LiveKitRoom
       video={true}
@@ -10,7 +16,7 @@ const Interview = ({ token }: { token: string }) => {
       connect={true}
       serverUrl={import.meta.env.VITE_NEXT_PUBLIC_LIVEKIT_URL}
       data-lk-theme="default"
-      style={{ height: "40dvh" }}
+      className={className || ""}
     >
       <VideoConference />
     </LiveKitRoom>

@@ -7,11 +7,13 @@
 body {
   margin: 0;
   padding: 0;
+  position: relative;
+  background-color: #0e1226;
+  color: white;
 }
 
 .Piece {
   position: relative;
-  background-color: #4682b4;
   width: 150px;
   height: 75px;
 }
@@ -22,5 +24,9 @@ body {
   left: 50%;
   margin-right: -50%;
   transform: translate(-50%, -50%);
-  color: white;
+}
+
+.terminal-container .xterm {
+  padding: 10px;
+  box-sizing: border-box;
 }

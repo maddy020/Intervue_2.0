@@ -3,7 +3,6 @@ import Terminal from "./Terminal";
 import { Socket, io } from "socket.io-client";
 import { useSearchParams } from "react-router-dom";
 import Editor from "./Editor";
-import Output from "./Output";
 import { FileType, File, RemoteFile } from "@repo/types";
 import Interview from "./Interview";
 import Draggable from "react-draggable";
@@ -69,6 +68,8 @@ export const CodingComp = ({ token }: { token: string }) => {
   const [currentFile, setCurrentFile] = useState<File>();
   const [selectedFile, setSelectedFile] = useState<File | undefined>(undefined);
   const [fileStructure, setFileStructure] = useState<RemoteFile[]>([]);
+  const [isDraggable, setIsDraggable] = useState(false);
+  const [isFullScreen, setIsFullScreen] = useState(true);
   const isDraggingRef = useRef(false);
 
   const onDrag = () => {
@@ -77,6 +78,11 @@ export const CodingComp = ({ token }: { token: string }) => {
 
   const onStop = () => {
     isDraggingRef.current = false;
+  };
+
+  const toggleSize = () => {
+    setIsFullScreen(!isFullScreen);
+    setIsDraggable(!isDraggable);
   };
 
   useEffect(() => {
@@ -139,9 +145,11 @@ export const CodingComp = ({ token }: { token: string }) => {
       );
     }
   };
+
   if (!loaded) {
     return <div className="bg-slate-600">loading...</div>;
   }
+
   return (
     <>
       <div className="flex text-lg">
@@ -152,20 +160,49 @@ export const CodingComp = ({ token }: { token: string }) => {
             selectedFile={selectedFile}
             files={fileStructure}
           />
-          <div className="flex flex-col ">
-            <Output />
+          <div className="mt-6">
+            <div className="ml-3 text-gray-400">Output</div>
             <Terminal socket={socket} />
           </div>
         </div>
       </div>
 
-      <Draggable onDrag={onDrag} onStop={onStop}>
-        <div className="Piece">
-          <span className="Piece-phrase">
-            <Interview token={token} />
-          </span>
+      {isFullScreen ? (
+        <button
+          onClick={toggleSize}
+          className="absolute z-50 top-2 right-2 bg-blue-500 text-white py-2 px-4 rounded-md"
+        >
+          Create Repl
+        </button>
+      ) : (
+        <button
+          onClick={toggleSize}
+          className="absolute z-20 top-2 right-2 bg-red-500 text-white py-2 px-4 rounded-md"
+        >
+          Close Repl
+        </button>
+      )}
+
+      {isDraggable ? (
+        <Draggable
+          onDrag={onDrag}
+          onStop={onStop}
+          defaultPosition={{
+            x: 1470,
+            y: -250,
+          }}
+        >
+          <div className="Piece">
+            <span className="Piece-phrase">
+              <Interview token={token} className={"h-[42dvh] w-[38dvw]"} />
+            </span>
+          </div>
+        </Draggable>
+      ) : (
+        <div className="absolute top-0 z-40">
+          <Interview token={token} className={"h-screen w-screen"} />
         </div>
-      </Draggable>
+      )}
     </>
   );
 };
