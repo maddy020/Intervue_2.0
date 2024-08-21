@@ -60,7 +60,9 @@ const handleDeleteMeeting = async (
   try {
     console.log("Deleting meeting with id", meetingId);
     await axios.delete(`http://localhost:8000/deleteMeet/${meetingId}`);
-    const res = await axios.get(`http://localhost:8000/allMeet/${id}`);
+    const res = await axios.get(
+      `http://localhost:8000/interviewsToConduct/${id}`
+    );
     setAllMeet(res.data.allmeet);
   } catch (error) {
     console.log("Error while deleting meeting", error);

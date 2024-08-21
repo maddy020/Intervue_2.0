@@ -133,7 +133,7 @@ app.post("/addUser", async (req, res) => {
   }
 });
 
-app.get("/allMeet/:id", async (req, res) => {
+app.get("/interviewsToConduct/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const allmeet = await prisma.meet.findMany({
@@ -151,6 +151,31 @@ app.get("/allMeet/:id", async (req, res) => {
     res.json({ allmeet });
   } catch (error) {
     console.log("Error in getting all meetings", error);
+  }
+});
+
+app.get("/interviewsToAttend/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const allmeet = await prisma.meet.findMany({
+      where: {
+        participants: {
+          some: {
+            userId: id,
+          },
+        },
+      },
+      include: {
+        participants: {
+          include: {
+            user: true,
+          },
+        },
+      },
+    });
+    res.json({ allmeet });
+  } catch (error) {
+    console.log("Error while handle Interviews to Attend", error);
   }
 });
 

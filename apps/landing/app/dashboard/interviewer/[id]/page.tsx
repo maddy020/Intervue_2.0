@@ -16,6 +16,8 @@ import done from "@/public/done_all_24dp_E8EAED_FILL0_wght400_GRAD0_opsz24.svg";
 import help from "@/public/help_24dp_E8EAED_FILL0_wght400_GRAD0_opsz24.svg";
 import keyboard from "@/public/keyboard_24dp_E8EAED_FILL0_wght400_GRAD0_opsz24.svg";
 import EventDone from "@/public/event_available_24dp_00000_FILL0_wght400_GRAD0_opsz24.svg";
+import WhitePending from "@/public/pending_in_white.svg";
+import WhiteGroup from "@/public/group_in_white.svg";
 import { useParams } from "next/navigation";
 
 function getRandomId() {
@@ -40,27 +42,58 @@ function getRandomId() {
 }
 
 export default function DemoPage() {
-  // const data = await getData();
   const [language, setLanguage] = useState("");
   const [value, setValue] = useState(getRandomId());
   const user = useUser();
   const [allMeet, setAllMeet] = useState<Meeting[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [focus, setFocus] = useState<"conduct" | "attend" | null>(null);
   const { id } = useParams();
 
   useEffect(() => {
-    const getUserMeet = async () => {
+    const handleInterviewsToConduct = async () => {
       try {
-        const res = await axios.get(`http://localhost:8000/allMeet/${id}`);
+        const res = await axios.get(
+          `http://localhost:8000/interviewsToConduct/${id}`
+        );
         setAllMeet(res.data.allmeet);
+        setFocus("conduct");
       } catch (error) {
         console.log("Error while fetching data", error);
       } finally {
         setIsLoading(false);
       }
     };
-    getUserMeet();
+    handleInterviewsToConduct();
   }, [id]);
+
+  const handleInterviewsToConduct = async (id: string | string[]) => {
+    try {
+      const res = await axios.get(
+        `http://localhost:8000/interviewsToConduct/${id}`
+      );
+      setAllMeet(res.data.allmeet);
+      setFocus("conduct");
+    } catch (error) {
+      console.log("Error while handle Interviews to conduct", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleInterviewsToAttend = async (id: string | string[]) => {
+    try {
+      const res = await axios.get(
+        `http://localhost:8000/interviewsToAttend/${id}`
+      );
+      setAllMeet(res.data.allmeet);
+      setFocus("attend");
+    } catch (error) {
+      console.log("Error while handle Interviews to Attend", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="border-2 h-[56rem] mx-4 my-4 rounded-3xl shadow-lg">
@@ -68,17 +101,50 @@ export default function DemoPage() {
       <div className="flex">
         <div className="w-[20%] flex flex-col items-center justify-between py-14 divide-y">
           <div className="flex flex-col gap-4 w-[80%]">
-            <div className="hover:bg-black hover:text-white p-4 rounded-xl cursor-pointer flex gap-4 hover-effect">
-              <Image src={group} width={24} height={24} alt="pending meeting" />
+            <div
+              className={`hover:bg-black hover:text-white p-4 rounded-xl cursor-pointer flex gap-4 hover-effect ${
+                focus === "conduct" ? "bg-black text-white" : ""
+              }`}
+              onClick={() => handleInterviewsToConduct(id)}
+            >
+              {focus === "conduct" ? (
+                <Image
+                  src={WhiteGroup}
+                  width={24}
+                  height={24}
+                  alt="pending meeting"
+                />
+              ) : (
+                <Image
+                  src={group}
+                  width={24}
+                  height={24}
+                  alt="pending meeting"
+                />
+              )}
               Interviews to Conduct
             </div>
-            <div className="hover:bg-black hover:text-white p-4 rounded-xl cursor-pointer flex gap-4 hover-effect">
-              <Image
-                src={pending}
-                width={24}
-                height={24}
-                alt="pending meeting"
-              />
+            <div
+              className={`hover:bg-black hover:text-white p-4 rounded-xl cursor-pointer flex gap-4 hover-effect ${
+                focus === "attend" ? "bg-black text-white" : ""
+              }`}
+              onClick={() => handleInterviewsToAttend(id)}
+            >
+              {focus === "attend" ? (
+                <Image
+                  src={WhitePending}
+                  width={24}
+                  height={24}
+                  alt="pending meeting"
+                />
+              ) : (
+                <Image
+                  src={pending}
+                  width={24}
+                  height={24}
+                  alt="pending meeting"
+                />
+              )}
               Interviews to Attend
             </div>
             <div className="hover:bg-black hover:text-white p-4 rounded-xl cursor-pointer flex gap-4 hover-effect">
@@ -133,9 +199,7 @@ export default function DemoPage() {
             />
             <DataTable
               columns={columns(user.user?.fullName as string, setAllMeet, id)}
-              data={allMeet.map((meet) => {
-                return meet;
-              })}
+              data={allMeet}
               isLoading={isLoading}
             />
           </div>
