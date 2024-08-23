@@ -81,7 +81,7 @@ spec:
                 name: service_name
                 port:
                   number: 3005
-    - host: service_name.madhav.devilclub.tech
+    - host: service_name.output.rishavrtwt.tech
       http:
         paths:
           - path: /

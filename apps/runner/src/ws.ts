@@ -87,4 +87,9 @@ async function initHandler(socket: Socket, replId: string) {
     terminalManager.write(socket.id, data);
     socket.broadcast.emit("broadcast", { data: data, id: socket.id });
   });
+
+  socket.on("CreateRepl", (data: boolean) => {
+    console.log("CreateRepl", data);
+    socket.broadcast.emit("Repl Created", data);
+  });
 }

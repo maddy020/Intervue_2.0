@@ -85,6 +85,45 @@ app.post("/start", async (req, res) => {
   }
 });
 
+app.post("/stop", async (req, res) => {
+  const { replId } = req.body;
+  const namespace = "default";
+  try {
+    const kubeManifests = readAndParseKubeYaml(
+      path.join(__dirname, "../service.yaml"),
+      replId
+    );
+    for (const manifest of kubeManifests) {
+      switch (manifest.kind) {
+        case "Deployment":
+          await appsV1Api.deleteNamespacedDeployment(
+            manifest.metadata.name,
+            namespace
+          );
+          break;
+        case "Service":
+          await coreV1Api.deleteNamespacedService(
+            manifest.metadata.name,
+            namespace
+          );
+          break;
+        case "Ingress":
+          await networkingV1Api.deleteNamespacedIngress(
+            manifest.metadata.name,
+            namespace
+          );
+          break;
+        default:
+          console.log(`Unsupported kind: ${manifest.kind}`);
+      }
+    }
+    res.status(200).send({ message: "Resources deleted successfully" });
+  } catch (error) {
+    console.error("Failed to delete resources", error);
+    res.status(500).send({ message: "Failed to delete resources" });
+  }
+});
+
 app.post("/startWorker", async (req, res) => {
   const namespace = "default";
   try {

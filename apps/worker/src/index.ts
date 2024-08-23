@@ -5,9 +5,18 @@ console.log("Worker initiated");
 
 const requestHandler = async (job: Job) => {
   try {
-    const res = await axios.post("http://localhost:3002/start", {
-      replId: job.data.data.replId as string,
-    });
+    let res;
+
+    if (job.data.data.role === "start") {
+      res = await axios.post("http://localhost:3002/start", {
+        replId: job.data.data.replId as string,
+      });
+    } else if (job.data.data.role === "stop") {
+      res = await axios.post("http://localhost:3002/stop", {
+        replId: job.data.data.replId as string,
+      });
+    }
+
     console.log(res);
   } catch (error) {
     console.log("Error in creating the worker", error);

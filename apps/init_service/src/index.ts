@@ -70,6 +70,7 @@ app.post("/schedulemeet", async (req, res) => {
           replId,
           interviewer,
           scheduleTime,
+          role: "start",
         },
       },
       {
@@ -227,6 +228,54 @@ app.delete("/deleteMeet/:id", async (req, res) => {
   } catch (error) {
     console.log("Error in deleting meeting", error);
     res.status(500).json({ error: "Error in deleting meeting" });
+  }
+});
+
+app.post("/EndMeeting", async (req, res) => {
+  try {
+    const { replId } = req.body;
+
+    await queue.add(
+      replId,
+      {
+        data: {
+          replId,
+          role: "stop",
+        },
+      },
+      {
+        removeOnComplete: true,
+        removeOnFail: true,
+        jobId: replId,
+      }
+    );
+
+    const id: string | undefined = (
+      await prisma.meet.findFirst({
+        where: {
+          roomId: replId,
+        },
+        select: {
+          id: true,
+        },
+      })
+    )?.id;
+
+    await prisma.meetsParticipants.deleteMany({
+      where: {
+        meetId: id,
+      },
+    });
+
+    await prisma.meet.delete({
+      where: {
+        id: id,
+      },
+    });
+
+    res.json({ status: "meeting ended" });
+  } catch (error) {
+    console.log("Error while end meeting", error);
   }
 });
 
