@@ -82,6 +82,7 @@ export const CodingComp = ({
   const [selectedFile, setSelectedFile] = useState<File | undefined>(undefined);
   const [fileStructure, setFileStructure] = useState<RemoteFile[]>([]);
   const [isFullScreen, setIsFullScreen] = useState(true);
+  const [showOutput, setShowOutput] = useState<boolean>(false);
   const isDraggingRef = useRef(false);
 
   const onDrag = () => {
@@ -181,7 +182,23 @@ export const CodingComp = ({
           <div className="mt-6">
             <div className="text-gray-400 ml-2">Output</div>
             <div className="flex flex-col gap-1 pl-2">
-              <Output />
+              <div className="flex gap-4">
+                <button
+                  className="bg-gray-400 text-blue-950 rounded-md px-2 py-1 font-semibold"
+                  onClick={() => setShowOutput(!showOutput)}
+                >
+                  {showOutput ? "Hide" : "Show"} Output
+                </button>
+
+                <a
+                  target="_blank"
+                  href={`http://${replId}.output.rishavrtwt.tech`}
+                  className="bg-gray-400 text-blue-950 rounded-md px-2 py-1 font-semibold flex items-center"
+                >
+                  <span className="material-symbols-outlined">open_in_new</span>
+                </a>
+              </div>
+              {showOutput && <Output />}
               <span className="text-gray-400">Terminal</span>
               <Terminal socket={socket} />
             </div>
