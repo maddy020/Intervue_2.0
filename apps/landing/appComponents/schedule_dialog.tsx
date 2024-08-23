@@ -13,7 +13,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import ComboboxDemo from "../appComponents/dropdown";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import DateTimePicker from "react-datetime-picker";
 import "react-datetime-picker/dist/DateTimePicker.css";
 import "react-calendar/dist/Calendar.css";
@@ -49,6 +48,7 @@ const Schedule_Dialog = ({
   const [filteredParticipants, setFilteredParticipants] = useState<BaseUser[]>(
     []
   );
+
   const handleParticipantSelect = (participant: BaseUser) => {
     if (
       selectedParticipants.length < 3 &&
@@ -69,6 +69,21 @@ const Schedule_Dialog = ({
       participant.email == user.user?.primaryEmailAddress?.emailAddress
   );
 
+  async function sendMailToParticipants() {
+    try {
+      const res = await axios.post("/api/sendEmail", {
+        participants: selectedParticipants,
+        user: {
+          fullName: user.user?.fullName,
+          email: user.user?.primaryEmailAddress?.emailAddress,
+        },
+      });
+      console.log(res.data.message);
+    } catch (error) {
+      console.error("Error sending email:", error);
+    }
+  }
+
   const handleSubmit = async () => {
     try {
       const newMeet = await axios.post("http://localhost:8000/schedulemeet", {
@@ -88,6 +103,8 @@ const Schedule_Dialog = ({
         replId: value,
         language: language,
       });
+
+      sendMailToParticipants();
     } catch (error) {
       console.log("Error while schedule meet, or in /project", error);
     }
