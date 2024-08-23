@@ -196,6 +196,7 @@ export default function DemoPage() {
               getRandomId={getRandomId}
               setAllMeet={setAllMeet}
               allMeet={allMeet}
+              focus={focus}
             />
             <DataTable
               columns={columns(
