@@ -15,10 +15,14 @@ function MeetingLinkCell({
   replId,
   dateandTime,
   username,
+  focus,
+  id,
 }: {
   replId: string;
   dateandTime: string;
   username: string;
+  focus: "conduct" | "attend" | null;
+  id: string | string[];
 }) {
   const router = useRouter();
   const handleMeetingJoin = async (
@@ -37,9 +41,15 @@ function MeetingLinkCell({
       return;
     }
 
-    router.replace(
-      `http://localhost:5173/coding?replId=${replId}&username=${username}`
-    );
+    if (focus === "conduct") {
+      router.replace(
+        `http://localhost:5173/coding?id=${id}&replId=${replId}&username=${username}&role=${process.env.NEXT_PUBLIC_INTERVIEWER}`
+      );
+    } else if (focus === "attend") {
+      router.replace(
+        `http://localhost:5173/coding?id=${id}&replId=${replId}&username=${username}&role=${process.env.NEXT_PUBLIC_INTERVIEWEE}`
+      );
+    }
   };
 
   return (
@@ -73,7 +83,8 @@ const handleDeleteMeeting = async (
 export const columns = (
   username: string,
   setAllMeet: React.Dispatch<React.SetStateAction<Meeting[]>>,
-  id: string | string[]
+  id: string | string[],
+  focus: "conduct" | "attend" | null
 ): ColumnDef<Meeting>[] => [
   {
     accessorKey: "status",
@@ -106,6 +117,8 @@ export const columns = (
         username={username}
         replId={row.original.roomId}
         dateandTime={row.original.dateandTime}
+        focus={focus}
+        id={id}
       />
     ),
   },
@@ -114,7 +127,7 @@ export const columns = (
     cell: ({ row }) => {
       const meeting = row.original;
 
-      return (
+      return focus === "conduct" ? (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="h-8 w-8 p-0">
@@ -131,7 +144,7 @@ export const columns = (
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-      );
+      ) : null;
     },
   },
 ];

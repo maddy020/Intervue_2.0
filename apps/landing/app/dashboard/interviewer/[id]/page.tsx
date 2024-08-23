@@ -198,7 +198,12 @@ export default function DemoPage() {
               allMeet={allMeet}
             />
             <DataTable
-              columns={columns(user.user?.fullName as string, setAllMeet, id)}
+              columns={columns(
+                user.user?.fullName as string,
+                setAllMeet,
+                id,
+                focus
+              )}
               data={allMeet}
               isLoading={isLoading}
             />

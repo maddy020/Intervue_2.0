@@ -89,7 +89,6 @@ const TerminalComponent = ({ socket }: { socket: Socket | null }) => {
       style={{
         width: "40vw",
         height: "50vh",
-        padding: "10px",
       }}
       ref={terminalRef}
     ></div>

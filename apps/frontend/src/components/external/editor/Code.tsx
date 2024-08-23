@@ -1,7 +1,12 @@
 import { Socket } from "socket.io-client";
 import { Editor } from "@monaco-editor/react";
 import { File } from "@repo/types";
-import { editor as monacoEditor } from "monaco-editor";
+import * as Y from "yjs";
+import { WebsocketProvider } from "y-websocket";
+import { MonacoBinding } from "y-monaco";
+import { editor } from "monaco-editor";
+import { useRef } from "react";
+
 const Code = ({
   socket,
   selectedFile,
@@ -10,6 +15,8 @@ const Code = ({
   selectedFile: File | undefined;
 }) => {
   const code = selectedFile?.content;
+  const editorRef = useRef<editor.IStandaloneCodeEditor>();
+
   let language = selectedFile?.name.split(".").pop();
   if (language == "js" || language == "jsx") {
     language = "javascript";
@@ -18,6 +25,7 @@ const Code = ({
   } else if (language == "py") {
     language = "python";
   }
+
   function debounce(func: (value: string) => void, wait: number) {
     let timeout: NodeJS.Timeout;
     return (value: string) => {
@@ -27,14 +35,14 @@ const Code = ({
       }, wait);
     };
   }
+
   const handleChange = (
     value: string | undefined,
-    event: monacoEditor.IModelContentChangedEvent
+    event: editor.IModelContentChangedEvent
   ) => {
     console.log("value", value);
     console.log("event", event);
     console.log("selectedFile", selectedFile?.path);
-
     if (value !== undefined) {
       debounce((value) => {
         socket?.emit("updateContent", {
@@ -45,18 +53,55 @@ const Code = ({
     }
   };
 
+  const handleMount = (editor: editor.IStandaloneCodeEditor) => {
+    editorRef.current = editor;
+
+    const doc = new Y.Doc();
+
+    const provider: WebsocketProvider = new WebsocketProvider(
+      "ws://localhost:1234",
+      "my-roomName",
+      doc
+    );
+    const type = doc.getText("monaco");
+
+    const binding = new MonacoBinding(
+      type,
+      editorRef.current!.getModel()!,
+      new Set([editorRef.current!])
+    );
+
+    console.log(binding, provider);
+
+    // provider.awareness.setLocalStateField("user", {
+    //   name: "Rishav",
+    //   color: "#ff0000",
+    // });
+
+    // provider.awareness.on("change", () => {
+    //   const states = Array.from(provider.awareness.getStates().values());
+    //   const usersList = states.map((state) => state.user);
+    //   setUsers(usersList);
+    // });
+  };
+
   return (
     <>
-      <Editor
-        width="45.5vw"
-        height="95vh"
-        language={language}
-        theme="vs-dark"
-        loading={"Loading..."}
-        value={code}
-        onChange={handleChange}
-        className="py-1"
-      />
+      <div style={{ display: "flex", flexDirection: "column" }}>
+        <div style={{ height: "95vh", position: "relative" }}>
+          <Editor
+            width="45.5vw"
+            height="100%"
+            language={language}
+            theme="vs-dark"
+            loading={"Loading..."}
+            value={code}
+            onChange={handleChange}
+            className="py-1"
+            onMount={handleMount}
+          />
+        </div>
+      </div>
     </>
   );
 };
