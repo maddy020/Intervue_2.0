@@ -6,7 +6,7 @@ export const Output = () => {
   const INSTANCE_URI = `http://${replId}.output.rishavrtwt.tech`;
 
   return (
-    <div style={{ height: "40vh", background: "white" }}>
+    <div style={{ height: "36vh", background: "white" }}>
       <iframe width={"100%"} height={"100%"} src={`${INSTANCE_URI}`} />
     </div>
   );

@@ -35,34 +35,65 @@ export const CodingPage = () => {
   const username = searchParams.get("username") ?? "";
   const role = searchParams.get("role") ?? "";
   const id = searchParams.get("id") ?? "";
+  const [isValidUser, setIsValidUser] = useState(false);
 
   useEffect(() => {
-    async function solve() {
+    const ValidateUser = async () => {
       try {
-        const res1 = await axios.get(
-          `http://localhost:8000/getToken?replId=${replId}&username=${username}`
-        );
-
-        setToken(res1.data.token);
+        const res = await axios.post(`http://localhost:8000/validUser/${id}`, {
+          replId: replId,
+        });
+        console.log(res.data);
+        setIsValidUser(res.data.status);
       } catch (error) {
-        console.log("Error while fetching token", error);
+        console.log("Error while validating user", error);
       }
-    }
-    solve();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [replId]);
+    };
+    ValidateUser();
+  }, [id, replId]);
 
-  useEffect(() => {
+  if (!isValidUser) {
+    return <div>You are not allowed to join this meeting</div>;
+  }
+
+  async function solve() {
+    try {
+      const res1 = await axios.get(
+        `http://localhost:8000/getToken?replId=${replId}&username=${username}`
+      );
+
+      setToken(res1.data.token);
+    } catch (error) {
+      console.log("Error while fetching token", error);
+    }
+  }
+
+  if (isValidUser) {
     if (replId && !podCreated) {
       localStorage.setItem("replId", replId);
       setPodCreated(true);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-  if (!podCreated) {
-    return <>Booting....</>;
+    solve();
+    return <CodingComp token={token} role={role} id={id} replId={replId} />;
   }
-  return <CodingComp token={token} role={role} id={id} replId={replId} />;
+
+  if (!podCreated) {
+    return (
+      <>
+        <div className="spinner">
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+        <div className="flex justify-center mt-10 text-xl">
+          Please wait, we are setting up the environment
+        </div>
+      </>
+    );
+  }
 };
 
 export const CodingComp = ({
@@ -166,7 +197,21 @@ export const CodingComp = ({
   };
 
   if (!loaded) {
-    return <div className="bg-slate-600">loading...</div>;
+    return (
+      <>
+        <div className="spinner">
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+        <div className="flex justify-center mt-10 text-xl">
+          Hold tight, we are ready to kick off the meeting
+        </div>
+      </>
+    );
   }
 
   return (
@@ -182,9 +227,9 @@ export const CodingComp = ({
           <div className="mt-6">
             <div className="text-gray-400 ml-2">Output</div>
             <div className="flex flex-col gap-1 pl-2">
-              <div className="flex gap-4">
+              <div className="flex gap-4 items-center">
                 <button
-                  className="bg-gray-400 text-blue-950 rounded-md px-2 py-1 font-semibold"
+                  className="hover:underline font-semibold"
                   onClick={() => setShowOutput(!showOutput)}
                 >
                   {showOutput ? "Hide" : "Show"} Output
@@ -193,7 +238,7 @@ export const CodingComp = ({
                 <a
                   target="_blank"
                   href={`http://${replId}.output.rishavrtwt.tech`}
-                  className="bg-gray-400 text-blue-950 rounded-md px-2 py-1 font-semibold flex items-center"
+                  className="flex items-center justify-center rounded-md p-2 hover:bg-slate-200 hover:text-black"
                 >
                   <span className="material-symbols-outlined">open_in_new</span>
                 </a>
