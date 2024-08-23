@@ -7,6 +7,7 @@ import { FileType, File, RemoteFile } from "@repo/types";
 import Interview from "./Interview";
 import Draggable from "react-draggable";
 import axios from "axios";
+import { Output } from "./Output";
 
 function useSocket() {
   const [socket, setSocket] = useState<Socket | null>(null);
@@ -32,7 +33,9 @@ export const CodingPage = () => {
   const [searchParams] = useSearchParams();
   const replId = searchParams.get("replId") ?? "";
   const username = searchParams.get("username") ?? "";
-  console.log(token);
+  const role = searchParams.get("role") ?? "";
+  const id = searchParams.get("id") ?? "";
+
   useEffect(() => {
     async function solve() {
       try {
@@ -59,16 +62,25 @@ export const CodingPage = () => {
   if (!podCreated) {
     return <>Booting....</>;
   }
-  return <CodingComp token={token} />;
+  return <CodingComp token={token} role={role} id={id} replId={replId} />;
 };
 
-export const CodingComp = ({ token }: { token: string }) => {
+export const CodingComp = ({
+  token,
+  role,
+  id,
+  replId,
+}: {
+  token: string;
+  role: string;
+  id: string;
+  replId: string;
+}) => {
   const socket = useSocket();
   const [loaded, setLoaded] = useState(false);
   const [currentFile, setCurrentFile] = useState<File>();
   const [selectedFile, setSelectedFile] = useState<File | undefined>(undefined);
   const [fileStructure, setFileStructure] = useState<RemoteFile[]>([]);
-  const [isDraggable, setIsDraggable] = useState(false);
   const [isFullScreen, setIsFullScreen] = useState(true);
   const isDraggingRef = useRef(false);
 
@@ -80,9 +92,9 @@ export const CodingComp = ({ token }: { token: string }) => {
     isDraggingRef.current = false;
   };
 
-  const toggleSize = () => {
+  const toggleSize = (data: boolean) => {
     setIsFullScreen(!isFullScreen);
-    setIsDraggable(!isDraggable);
+    socket?.emit("CreateRepl", data);
   };
 
   useEffect(() => {
@@ -90,6 +102,11 @@ export const CodingComp = ({ token }: { token: string }) => {
       socket.on("loaded", ({ rootContent }: { rootContent: RemoteFile[] }) => {
         setLoaded(true);
         setFileStructure(rootContent);
+      });
+
+      socket.on("Repl Created", (data: boolean) => {
+        console.log("Repl Created", data);
+        setIsFullScreen(!data);
       });
     }
   }, [socket]);
@@ -135,6 +152,7 @@ export const CodingComp = ({ token }: { token: string }) => {
       });
     } else {
       setCurrentFile(file);
+      console.log("fetchContent", currentFile);
       socket?.emit(
         "fetchContent",
         { path: file.path, file: file },
@@ -161,46 +179,63 @@ export const CodingComp = ({ token }: { token: string }) => {
             files={fileStructure}
           />
           <div className="mt-6">
-            <div className="ml-3 text-gray-400">Output</div>
-            <Terminal socket={socket} />
+            <div className="text-gray-400 ml-2">Output</div>
+            <div className="flex flex-col gap-1 pl-2">
+              <Output />
+              <span className="text-gray-400">Terminal</span>
+              <Terminal socket={socket} />
+            </div>
           </div>
         </div>
       </div>
 
-      {isFullScreen ? (
-        <button
-          onClick={toggleSize}
-          className="absolute z-50 top-2 right-2 bg-blue-500 text-white py-2 px-4 rounded-md"
-        >
-          Create Repl
-        </button>
-      ) : (
-        <button
-          onClick={toggleSize}
-          className="absolute z-20 top-2 right-2 bg-red-500 text-white py-2 px-4 rounded-md"
-        >
-          Close Repl
-        </button>
-      )}
+      {role === import.meta.env.VITE_INTERVIEWER &&
+        (isFullScreen ? (
+          <button
+            onClick={() => toggleSize(true)}
+            className="absolute z-50 top-2 right-2 bg-blue-500 text-white py-2 px-4 rounded-md"
+          >
+            Create Repl
+          </button>
+        ) : (
+          <button
+            onClick={() => toggleSize(false)}
+            className="absolute z-20 top-2 right-2 bg-red-500 text-white py-2 px-4 rounded-md"
+          >
+            Close Repl
+          </button>
+        ))}
 
-      {isDraggable ? (
+      {isFullScreen === false ? (
         <Draggable
           onDrag={onDrag}
           onStop={onStop}
           defaultPosition={{
-            x: 1470,
-            y: -250,
+            x: 290,
+            y: -240,
           }}
         >
           <div className="Piece">
             <span className="Piece-phrase">
-              <Interview token={token} className={"h-[42dvh] w-[38dvw]"} />
+              <Interview
+                token={token}
+                className={"h-[42dvh] w-[38dvw]"}
+                id={id}
+                replId={replId}
+                role={role}
+              />
             </span>
           </div>
         </Draggable>
       ) : (
         <div className="absolute top-0 z-40">
-          <Interview token={token} className={"h-screen w-screen"} />
+          <Interview
+            token={token}
+            className={"h-screen w-screen"}
+            id={id}
+            replId={replId}
+            role={role}
+          />
         </div>
       )}
     </>
