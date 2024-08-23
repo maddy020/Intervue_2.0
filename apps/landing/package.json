@@ -25,6 +25,7 @@
     "date-fns": "^3.6.0",
     "lucide-react": "^0.403.0",
     "next": "14.2.4",
+    "nodemailer": "^6.9.14",
     "react": "^18",
     "react-datetime-picker": "^6.0.1",
     "react-day-picker": "^8.10.1",
@@ -35,6 +36,7 @@
   },
   "devDependencies": {
     "@types/node": "^20",
+    "@types/nodemailer": "^6.4.15",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "eslint": "^8",

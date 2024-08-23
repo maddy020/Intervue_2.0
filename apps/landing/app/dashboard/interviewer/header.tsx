@@ -1,18 +1,12 @@
 import React from "react";
 import Userbutton from "@/appComponents/userButton";
-import Image from "next/image";
-import Logo from "@/assets/Logo1.png";
+import Logo from "@/appComponents/icons/Logo";
 
 const Header = () => {
   return (
     <div className="flex justify-between h-24 items-center px-8">
       <div>
-        <Image
-          src={Logo}
-          width={80}
-          height={80}
-          alt="Picture of the interviewer"
-        />
+        <Logo />
       </div>
       <div>
         <Userbutton />

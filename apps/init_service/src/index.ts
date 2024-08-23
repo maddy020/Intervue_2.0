@@ -15,6 +15,31 @@ const queue = new Queue("Intervue", {
 app.use(cors());
 app.use(express.json());
 
+app.post("/validUser/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { replId } = req.body;
+
+    const isValidUser = await prisma.meet.findFirst({
+      where: {
+        roomId: replId,
+        participants: {
+          some: {
+            userId: id,
+          },
+        },
+      },
+    });
+
+    if (!isValidUser) {
+      return res.json({ status: false });
+    }
+    res.json({ status: true });
+  } catch (error) {
+    console.log("Error while validating user", error);
+  }
+});
+
 app.post("/project", async (req, res) => {
   try {
     const { replId, language } = req.body;
