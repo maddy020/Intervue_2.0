@@ -72,17 +72,6 @@ const Code = ({
     );
 
     console.log(binding, provider);
-
-    // provider.awareness.setLocalStateField("user", {
-    //   name: "Rishav",
-    //   color: "#ff0000",
-    // });
-
-    // provider.awareness.on("change", () => {
-    //   const states = Array.from(provider.awareness.getStates().values());
-    //   const usersList = states.map((state) => state.user);
-    //   setUsers(usersList);
-    // });
   };
 
   return (
