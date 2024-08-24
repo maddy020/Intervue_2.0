@@ -13,6 +13,11 @@ import Logo from "../appComponents/icons/Logo";
 import { Menu } from "lucide-react";
 import { BaseUser } from "@repo/types";
 import { useRouter } from "next/navigation";
+import loginIcon from "./icons/clerk.jpg";
+import Image from "next/image";
+import "./styles/module.css";
+import Link from "next/link";
+import dashboard from "./icons/dashboardImage.svg";
 
 const Appbar = (currentUser: { currentUser: BaseUser | undefined }) => {
   const router = useRouter();
@@ -22,16 +27,69 @@ const Appbar = (currentUser: { currentUser: BaseUser | undefined }) => {
   };
 
   return (
-    <div className="absolute w-full top-0 py-4 border-b md:border-none">
-      <div className="px-4 container mx-auto">
-        <div className="flex justify-between items-center md:border">
+    <div className="appbar py-4 border-b">
+      <div className="px-4 appbar-first">
+        <div className="flex justify-between items-center appbar-second">
           <Logo />
-          <Button>Product Demo</Button>
-          <Button>Login</Button>
-          <Button onClick={() => handleDashboard(currentUser.currentUser?.id)}>
-            Dashboard
-          </Button>
-          <div className="md:hidden">
+          <div className="navDiv">
+            <nav className="flex items-center">
+              <Link
+                className="text-black/70 hover:text-black transition"
+                href="#"
+              >
+                Products
+              </Link>
+              <Link
+                className="text-black/70 hover:text-black transition"
+                href="#"
+              >
+                API & Docs
+              </Link>
+              <Link
+                className="text-black/70 hover:text-black transition"
+                href="#"
+              >
+                FAQ
+              </Link>
+              <Link
+                className="text-black/70 hover:text-black transition"
+                href="#"
+              >
+                Company
+              </Link>
+              <Button
+                className="loginButton"
+                onClick={() => handleDashboard(currentUser.currentUser?.id)}
+              >
+                Dashboard
+                <Image src={dashboard} width={22} height={22} alt="dashboard" />
+              </Button>
+              <Button
+                className="loginButton"
+                onClick={() => {
+                  router.push("/sign-in");
+                }}
+              >
+                Login
+                <Image
+                  src={loginIcon}
+                  width={26}
+                  height={26}
+                  alt="login Icon"
+                />
+              </Button>
+            </nav>
+          </div>
+          <div className="hamburger">
+            <Button
+              className="loginButton"
+              onClick={() => {
+                router.push("/sign-in");
+              }}
+            >
+              Login
+              <Image src={loginIcon} width={26} height={26} alt="login Icon" />
+            </Button>
             <DropdownMenu>
               <DropdownMenuTrigger>
                 <span className="md:hidden">
@@ -41,10 +99,21 @@ const Appbar = (currentUser: { currentUser: BaseUser | undefined }) => {
               <DropdownMenuContent>
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>Profile</DropdownMenuItem>
-                <DropdownMenuItem>Billing</DropdownMenuItem>
-                <DropdownMenuItem>Team</DropdownMenuItem>
-                <DropdownMenuItem>Subscription</DropdownMenuItem>
+                <DropdownMenuItem
+                  className="cursor-pointer"
+                  onClick={() => handleDashboard(currentUser.currentUser?.id)}
+                >
+                  Dashboard
+                </DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer">
+                  Product Demo
+                </DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer">
+                  Profile
+                </DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer">
+                  Team
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>

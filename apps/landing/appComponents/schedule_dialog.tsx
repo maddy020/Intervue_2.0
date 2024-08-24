@@ -29,6 +29,7 @@ const Schedule_Dialog = ({
   getRandomId,
   setAllMeet,
   allMeet,
+  focus,
 }: {
   value: string;
   language: string;
@@ -37,6 +38,7 @@ const Schedule_Dialog = ({
   getRandomId: () => string;
   setAllMeet: React.Dispatch<React.SetStateAction<Meeting[]>>;
   allMeet: Meeting[];
+  focus: "conduct" | "attend" | null;
 }) => {
   const [selectedParticipants, setSelectedParticipants] = useState<BaseUser[]>(
     []
@@ -77,6 +79,7 @@ const Schedule_Dialog = ({
           fullName: user.user?.fullName,
           email: user.user?.primaryEmailAddress?.emailAddress,
         },
+        time: time,
       });
       console.log(res.data.message);
     } catch (error) {
@@ -94,7 +97,7 @@ const Schedule_Dialog = ({
           name: loggedUser?.name,
         },
         scheduleTime: time,
-        participants: [...selectedParticipants, loggedUser],
+        participants: selectedParticipants,
       });
 
       setAllMeet([...allMeet, newMeet.data.newMeet]);
@@ -124,118 +127,122 @@ const Schedule_Dialog = ({
   };
 
   return (
-    <Dialog>
-      <div className="flex justify-end">
-        <DialogTrigger asChild>
-          <Button variant="default" onClick={handleScheduling}>
-            Schedule Interview
-          </Button>
-        </DialogTrigger>
-      </div>
-      <DialogContent className="sm:max-w-[425px]">
-        <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="replid">ReplId</Label>
-            <Input
-              id="replid"
-              defaultValue={value}
-              className="col-span-3"
-              disabled
-            />
-          </div>
-
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="date">Date</Label>
-            <DateTimePicker
-              onChange={(value) => {
-                setTime(value?.toISOString() as string);
-              }}
-              value={new Date(time)}
-              disableClock={true}
-            />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="language">Language</Label>
-            <ComboboxDemo language={language} setLanguage={setLanguage} />
-          </div>
-          <div className="relative">
+    focus === "conduct" && (
+      <Dialog>
+        <div className="flex justify-end">
+          <DialogTrigger asChild>
+            <Button variant="default" onClick={handleScheduling}>
+              Schedule Interview
+            </Button>
+          </DialogTrigger>
+        </div>
+        <DialogContent className="sm:max-w-[425px]">
+          <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="search">Participants</Label>
+              <Label htmlFor="replid">ReplId</Label>
               <Input
-                id="search"
-                value={searchQuery}
-                onChange={(e) => {
-                  setSearchQuery(e.target.value);
-                  setFilteredParticipants(
-                    participants.filter((participant) => {
-                      return (
-                        participant.name
-                          .toLowerCase()
-                          .includes(e.target.value.toLowerCase()) ||
-                        participant.email
-                          .toLowerCase()
-                          .includes(e.target.value.toLowerCase())
-                      );
-                    })
-                  );
-                }}
+                id="replid"
+                defaultValue={value}
                 className="col-span-3"
-                placeholder="Search..."
+                disabled
               />
             </div>
-            {searchQuery && (
-              <div className="absolute w-full mt-2">
-                {filteredParticipants.map(
-                  (participant) =>
-                    loggedUser?.email !== participant.email && (
-                      <div
-                        key={participant.email}
-                        className="flex items-center justify-between"
-                      >
-                        <Button
-                          className="w-full flex justify-start"
-                          variant="ghost"
-                          onClick={() => {
-                            handleParticipantSelect(participant);
-                            setSearchQuery("");
-                          }}
-                          disabled={selectedParticipants.includes(participant)}
+
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="date">Date</Label>
+              <DateTimePicker
+                onChange={(value) => {
+                  setTime(value?.toISOString() as string);
+                }}
+                value={new Date(time)}
+                disableClock={true}
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="language">Language</Label>
+              <ComboboxDemo language={language} setLanguage={setLanguage} />
+            </div>
+            <div className="relative">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="search">Participants</Label>
+                <Input
+                  id="search"
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    setFilteredParticipants(
+                      participants.filter((participant) => {
+                        return (
+                          participant.name
+                            .toLowerCase()
+                            .includes(e.target.value.toLowerCase()) ||
+                          participant.email
+                            .toLowerCase()
+                            .includes(e.target.value.toLowerCase())
+                        );
+                      })
+                    );
+                  }}
+                  className="col-span-3"
+                  placeholder="Search..."
+                />
+              </div>
+              {searchQuery && (
+                <div className="absolute w-full mt-2">
+                  {filteredParticipants.map(
+                    (participant) =>
+                      loggedUser?.email !== participant.email && (
+                        <div
+                          key={participant.email}
+                          className="flex items-center justify-between"
                         >
-                          {participant.name}
-                        </Button>
-                      </div>
-                    )
-                )}
-              </div>
-            )}
-          </div>
-          <div className="grid gap-2 col-span-4">
-            {selectedParticipants.map((participant) => (
-              <div
-                key={participant.email}
-                className="flex items-center space-x-2"
-              >
-                <span>{participant.name}</span>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleParticipantRemove(participant.email)}
+                          <Button
+                            className="w-full flex justify-start"
+                            variant="ghost"
+                            onClick={() => {
+                              handleParticipantSelect(participant);
+                              setSearchQuery("");
+                            }}
+                            disabled={selectedParticipants.includes(
+                              participant
+                            )}
+                          >
+                            {participant.name}
+                          </Button>
+                        </div>
+                      )
+                  )}
+                </div>
+              )}
+            </div>
+            <div className="grid gap-2 col-span-4">
+              {selectedParticipants.map((participant) => (
+                <div
+                  key={participant.email}
+                  className="flex items-center space-x-2"
                 >
-                  Cancel
-                </Button>
-              </div>
-            ))}
+                  <span>{participant.name}</span>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleParticipantRemove(participant.email)}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-        <DialogFooter>
-          <DialogClose>
-            <Button type="submit" onClick={handleSubmit}>
-              Schedule
-            </Button>
-          </DialogClose>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+          <DialogFooter>
+            <DialogClose>
+              <Button type="submit" onClick={handleSubmit}>
+                Schedule
+              </Button>
+            </DialogClose>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    )
   );
 };
 

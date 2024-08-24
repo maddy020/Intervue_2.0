@@ -6,9 +6,11 @@ export async function POST(request: Request) {
   const {
     participants,
     user,
+    time,
   }: {
     participants: BaseUser[];
     user: { fullName: string | null | undefined; email: string | undefined };
+    time: string;
   } = await request.json();
 
   const transporter = nodemailer.createTransport({
@@ -26,7 +28,7 @@ export async function POST(request: Request) {
         from: `${user.fullName} <${user.email}>`,
         to: `${participant.email}`,
         subject: "Interview Scheduled",
-        text: `Hey ${participant.name}, you are scheduled for an interview with ${user.fullName}. Please join the meeting at the following link: [${meetingLink}]`,
+        text: `Hey ${participant.name}, you are scheduled for an interview with ${user.fullName} on ${new Date(time)}. Please join the meeting at schedule Date and Time from the following link: [${meetingLink}]`,
       });
 
       console.log("Message sent: %s", info.messageId);
