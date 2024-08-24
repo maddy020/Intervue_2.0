@@ -20,8 +20,11 @@ export default function RootLayout({
       publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
     >
       <html lang="en" className="m-0 p-0 box-border">
+        <head>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+        </head>
         <body
-          className={`${inter.className} h-screen overflow-y-hidden text-lg`}
+          className={`${inter.className} h-screen text-lg`}
         >
           <main className="h-screen relative">{children}</main>
         </body>

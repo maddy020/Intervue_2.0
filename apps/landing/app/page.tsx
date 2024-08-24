@@ -5,7 +5,11 @@ import { useUser } from "@clerk/nextjs";
 import Appbar from "../appComponents/Appbar";
 import axios from "axios";
 import { BaseUser } from "@repo/types";
-
+import {Footer} from "@/appComponents/Footer";
+import CtaFooter from "@/appComponents/CtaFooter";
+import "../appComponents/styles/module.css"
+import Testimonials from "@/appComponents/Testimonials";
+import DocsShowcase from "@/appComponents/Docshowcase";
 export default function Home() {
   const { isSignedIn, user } = useUser();
   const [currentUser, setCurrentUser] = useState<BaseUser | undefined>();
@@ -41,8 +45,10 @@ export default function Home() {
 
   return (
     <div>
-      <Appbar currentUser={currentUser} />
-      <h1 className="mt-12">Hello</h1>
+      <DocsShowcase/>
+      <Testimonials/>
+      <CtaFooter/>
+      <Footer/>
     </div>
   );
 }
