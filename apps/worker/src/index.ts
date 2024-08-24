@@ -24,7 +24,7 @@ const requestHandler = async (job: Job) => {
 };
 const worker = new Worker("Intervue", (job: Job) => requestHandler(job), {
   connection: {
-    host: "http://redis:6379",
+    host: "redis.cloud.rishavrtwt.tech",
   },
 });
 

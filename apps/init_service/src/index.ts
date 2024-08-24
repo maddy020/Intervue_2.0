@@ -9,7 +9,7 @@ import prisma from "@repo/prismaclient";
 const app = express();
 const queue = new Queue("Intervue", {
   connection: {
-    host: "http://redis:6379",
+    host: "redis.cloud.rishavrtwt.tech",
   },
 });
 app.use(cors());

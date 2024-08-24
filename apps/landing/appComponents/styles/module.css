@@ -1,0 +1,328 @@
+.appbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 10;
+    background-color: white;
+}
+
+.navDiv {
+    display: none;
+}
+
+.navDiv nav a {
+    font-size: 16px;
+    color: rgb(95, 95, 95);
+}
+
+.navDiv nav a:hover {
+    color: rgb(0, 0, 0);
+    transition: all 0.3s;
+}
+
+.hamburger {
+    display: flex;
+    gap: 20px;
+}
+
+.FeatureCardImage {
+    width: 80%;
+    /* height: 80%; */
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+@media screen and (min-width: 600px) {
+    .navDiv {
+        display: block;
+    }
+
+    .navDiv nav {
+        gap: 2rem;
+    }
+
+    .hamburger {
+        display: none;
+    }
+}
+
+@media screen and (min-width: 992px) {
+    .appbar {
+        border: none;
+        background: none;
+    }
+
+    .appbar-first {
+        display: flex;
+        justify-content: center;
+    }
+
+    .appbar-second {
+        width: 50%;
+        border: 1px solid rgb(218, 218, 218);
+        padding: 0.8rem;
+        border-radius: 16px;
+        background-color: rgba(255, 255, 255, 0.8);
+    }
+}
+
+.loginButton {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+
+
+.HeroContainer {
+    margin-top: 6rem;
+}
+
+.userIcon {
+    background-color: white;
+    border-radius: 999px;
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+    animation: UpandDown 2s infinite;
+}
+
+.meetIcon {
+    right: 16px;
+    top: 58%;
+    background-color: white;
+    border-radius: 999px;
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+    animation: UpandDown 2s infinite;
+}
+
+@keyframes UpandDown {
+    0% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+
+    100% {
+        transform: translateY(0);
+    }
+}
+
+
+.Streamline {
+    font-size: 39px;
+    font-weight: 700;
+    text-align: center;
+    line-height: 2.7rem;
+    letter-spacing: -1.5px;
+}
+
+.Hiring {
+    margin-top: 1rem;
+    color: rgb(95, 95, 95);
+    letter-spacing: -1px;
+    font-size: 19px;
+}
+
+.HiringButton {
+    margin-top: 1rem;
+}
+
+.SignupButton {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+}
+
+
+.heroImageContainerSection {
+    margin-top: 2.5rem;
+    margin-bottom: 2.5rem;
+}
+
+.content {
+    padding-left: 20px;
+    padding-right: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.Logo-ticker-container {
+    margin-top: 5.5rem;
+    margin-bottom: 5.5rem;
+}
+
+.features-pad {
+    padding: 5px 12px;
+}
+
+.keyFeatures {
+    font-size: 2.25rem;
+    font-weight: 700;
+    margin-top: 1.5rem;
+}
+
+.Explore {
+    margin-top: 1.5rem;
+    color: rgb(95, 95, 95);
+    letter-spacing: -1px;
+}
+
+.featurecardContainer {
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.featurecardContainer>div {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.featureCardShadow {
+    border-radius: 8px;
+    height: 100%;
+}
+
+.featureCardShadow:hover {
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.4);
+    transition: all 0.3s;
+}
+
+.titleMain {
+    font-size: 2.1rem;
+    font-weight: 700;
+    line-height: 2.5rem;
+}
+
+.descriptionMain {
+    color: rgb(95, 95, 95);
+    letter-spacing: -1px;
+}
+
+.learnButton {
+    padding-top: 1.8rem;
+    padding-bottom: 1.8rem;
+}
+
+@media screen and (min-width: 600px) {
+    .featurecardContainer>div {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        padding-left: 25rem;
+        padding-right: 25rem;
+    }
+
+    .keyFeatures {
+        font-size: 39px;
+        margin-top: 2.5rem;
+    }
+
+    .Explore {
+        margin-top: 3.5rem;
+    }
+
+    .featurecardContainer {
+        margin-top: 2.5rem;
+        margin-bottom: 2.5rem;
+    }
+}
+
+@media screen and (min-width: 1200px) {
+
+    .Streamline {
+        font-size: 70px;
+        line-height: 4.5rem;
+    }
+
+    .StreamlineDiv {
+        padding-left: 25rem;
+        padding-right: 25rem;
+    }
+
+    .Hiring {
+        padding-left: 12rem;
+        padding-right: 12rem;
+        margin-top: 2.2rem;
+    }
+
+    .SignupButton {
+        font-size: 16px;
+    }
+
+    .SignupButton img {
+        width: 30px;
+        height: 30px;
+    }
+
+    .HeroContainer {
+        margin-top: 15rem;
+    }
+
+    .userIcon {
+        width: 100px;
+        height: 100px;
+        position: absolute;
+        left: 35rem;
+        top: -7rem;
+    }
+
+    .meetIcon {
+        right: 32rem;
+        top: 70%;
+        width: 100px;
+        height: 100px;
+    }
+
+    .HiringButton {
+        margin-top: 2.2rem;
+    }
+
+    .heroImageContainerSection {
+        margin-top: 6rem;
+        margin-bottom: 5rem;
+        padding-left: 18rem;
+        padding-right: 18rem;
+    }
+
+    .content {
+        padding-left: 28rem;
+        padding-right: 28rem;
+    }
+
+    .Logo-ticker-container {
+        margin-bottom: 5rem;
+    }
+
+    .keyFeatures {
+        font-size: 4.5rem;
+    }
+}
+
+.heroImageContainer {
+    background-color: #e8ecf0;
+    border-radius: 14px;
+}
+
+.inner-container {
+    background-color: white;
+}
+
+.logo-ticker {
+    display: flex;
+    gap: 3.5rem;
+    padding-right: 3.5rem;
+}
+
+.logo-ticker img {
+    width: 130px;
+}
+
+.logo-container {
+    display: flex;
+    overflow: hidden;
+    mask-image: linear-gradient(to right, transparent, black, transparent);
+}

@@ -1,26 +1,18 @@
 "use client";
 
+import Appbar from "../appComponents/Appbar";
+import Hero from "@/appComponents/Hero";
+import HeroImage from "@/appComponents/HeroImage";
+import LogoTicker from "@/appComponents/LogoTicker";
+import Feature from "@/appComponents/Features";
 import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
-import Appbar from "../appComponents/Appbar";
 import axios from "axios";
 import { BaseUser } from "@repo/types";
 
 export default function Home() {
   const { isSignedIn, user } = useUser();
   const [currentUser, setCurrentUser] = useState<BaseUser | undefined>();
-
-  useEffect(() => {
-    if (isSignedIn) {
-      axios
-        .post("http://localhost:8000/addUser", {
-          email: user.primaryEmailAddress?.emailAddress,
-          name: user.fullName,
-        })
-        .then(() => console.log("User added to the database"))
-        .catch((err) => console.log(err));
-    }
-  }, [isSignedIn, user]);
 
   useEffect(() => {
     const email = user?.primaryEmailAddress?.emailAddress;
@@ -40,9 +32,12 @@ export default function Home() {
   }, [isSignedIn, user]);
 
   return (
-    <div>
+    <>
       <Appbar currentUser={currentUser} />
-      <h1 className="mt-12">Hello</h1>
-    </div>
+      <Hero />
+      <HeroImage />
+      <LogoTicker />
+      <Feature />
+    </>
   );
 }

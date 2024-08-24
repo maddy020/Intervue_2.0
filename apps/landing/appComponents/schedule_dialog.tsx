@@ -97,7 +97,7 @@ const Schedule_Dialog = ({
           name: loggedUser?.name,
         },
         scheduleTime: time,
-        participants: [...selectedParticipants, loggedUser],
+        participants: selectedParticipants,
       });
 
       setAllMeet([...allMeet, newMeet.data.newMeet]);
