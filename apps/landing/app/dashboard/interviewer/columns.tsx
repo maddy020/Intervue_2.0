@@ -43,11 +43,11 @@ function MeetingLinkCell({
 
     if (focus === "conduct") {
       router.replace(
-        `http://localhost:5173/coding?id=${id}&replId=${replId}&username=${username}&role=${process.env.NEXT_PUBLIC_INTERVIEWER}`
+        `${process.env.NEXT_PUBLIC_CODING_URL}/coding?id=${id}&replId=${replId}&username=${username}&role=${process.env.NEXT_PUBLIC_INTERVIEWER}`
       );
     } else if (focus === "attend") {
       router.replace(
-        `http://localhost:5173/coding?id=${id}&replId=${replId}&username=${username}&role=${process.env.NEXT_PUBLIC_INTERVIEWEE}`
+        `${process.env.NEXT_PUBLIC_CODING_URL}/coding?id=${id}&replId=${replId}&username=${username}&role=${process.env.NEXT_PUBLIC_INTERVIEWEE}`
       );
     }
   };

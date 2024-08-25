@@ -23,7 +23,7 @@ export async function POST(request: Request) {
 
   try {
     for (const participant of participants) {
-      let meetingLink = `http://localhost:3000/dashboard/interviewer/${participant.id}`;
+      let meetingLink = `${process.env.NEXT_PUBLIC_LANDING_URL}/dashboard/interviewer/${participant.id}`;
       const info = await transporter.sendMail({
         from: `${user.fullName} <${user.email}>`,
         to: `${participant.email}`,
