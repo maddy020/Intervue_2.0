@@ -59,8 +59,8 @@ const Code = ({
     const doc = new Y.Doc();
 
     const provider: WebsocketProvider = new WebsocketProvider(
-      "ws://localhost:1234",
-      "my-roomName",
+      "ws://intervue.initservice.rishavrtwt.tech/yjs",
+      "my-roomname",
       doc
     );
     const type = doc.getText("monaco");

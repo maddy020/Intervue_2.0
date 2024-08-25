@@ -10,7 +10,7 @@ const Hero = () => {
   const router = useRouter();
   return (
     <section className="items-center md:mt-40 HeroContainer">
-      <div className="container mx-auto px-4 relative">
+      <div className="mx-auto px-4 relative">
         <Image
           src={user}
           alt=""

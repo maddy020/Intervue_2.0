@@ -9,9 +9,9 @@ import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import axios from "axios";
 import { BaseUser } from "@repo/types";
-import {Footer} from "@/appComponents/Footer";
+import { Footer } from "@/appComponents/Footer";
 import CtaFooter from "@/appComponents/CtaFooter";
-import "../appComponents/styles/module.css"
+import "../appComponents/styles/module.css";
 import Testimonials from "@/appComponents/Testimonials";
 import DocsShowcase from "@/appComponents/Docshowcase";
 export default function Home() {
@@ -24,7 +24,7 @@ export default function Home() {
       try {
         if (isSignedIn) {
           const res = await axios.get(
-            `http://localhost:8000/currentUser/${email}`
+            `${process.env.NEXT_PUBLIC_SERVER_URL}/currentUser/${email}`
           );
           setCurrentUser(res.data.currentUser);
         }
@@ -42,11 +42,10 @@ export default function Home() {
       <HeroImage />
       <LogoTicker />
       <Feature />
-      <DocsShowcase/>
-      <Testimonials/>
-      <CtaFooter/>
-      <Footer/>
+      <DocsShowcase />
+      <Testimonials />
+      <CtaFooter />
+      <Footer />
     </>
-
   );
 }

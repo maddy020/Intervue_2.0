@@ -54,7 +54,7 @@ export default function DemoPage() {
     const handleInterviewsToConduct = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:8000/interviewsToConduct/${id}`
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/interviewsToConduct/${id}`
         );
         setAllMeet(res.data.allmeet);
         setFocus("conduct");
@@ -70,7 +70,7 @@ export default function DemoPage() {
   const handleInterviewsToConduct = async (id: string | string[]) => {
     try {
       const res = await axios.get(
-        `http://localhost:8000/interviewsToConduct/${id}`
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/interviewsToConduct/${id}`
       );
       setAllMeet(res.data.allmeet);
       setFocus("conduct");
@@ -84,7 +84,7 @@ export default function DemoPage() {
   const handleInterviewsToAttend = async (id: string | string[]) => {
     try {
       const res = await axios.get(
-        `http://localhost:8000/interviewsToAttend/${id}`
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/interviewsToAttend/${id}`
       );
       setAllMeet(res.data.allmeet);
       setFocus("attend");

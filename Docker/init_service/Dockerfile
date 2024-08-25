@@ -14,6 +14,7 @@ COPY ../../turbo.json /usr/src/app/turbo.json
 RUN npm install
 
 COPY ../../node_modules/.prisma /usr/src/app/apps/init_service/node_modules/.prisma
+COPY ../../node_modules/.bin /usr/src/app/apps/init_service/node_modules/.bin
 
 RUN npm install
 

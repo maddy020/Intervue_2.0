@@ -3,11 +3,29 @@ import Terminal from "./Terminal";
 import { Socket, io } from "socket.io-client";
 import { useSearchParams } from "react-router-dom";
 import Editor from "./Editor";
-import { FileType, File, RemoteFile } from "@repo/types";
+import { RemoteFile } from "@repo/types";
 import Interview from "./Interview";
 import Draggable from "react-draggable";
 import axios from "axios";
 import { Output } from "./Output";
+
+enum FileType {
+  FILE,
+  DIRECTORY,
+  DUMMY,
+}
+
+interface CommonProps {
+  id: string;
+  name: string;
+  type: FileType;
+  depth: number;
+  content?: string;
+  path: string;
+  parentId: string | undefined;
+}
+
+interface File extends CommonProps {}
 
 function useSocket() {
   const [socket, setSocket] = useState<Socket | null>(null);
@@ -40,9 +58,12 @@ export const CodingPage = () => {
   useEffect(() => {
     const ValidateUser = async () => {
       try {
-        const res = await axios.post(`http://localhost:8000/validUser/${id}`, {
-          replId: replId,
-        });
+        const res = await axios.post(
+          `${import.meta.env.VITE_SERVER_URL}/validUser/${id}`,
+          {
+            replId: replId,
+          }
+        );
         console.log(res.data);
         setIsValidUser(res.data.status);
       } catch (error) {
@@ -59,7 +80,7 @@ export const CodingPage = () => {
   async function solve() {
     try {
       const res1 = await axios.get(
-        `http://localhost:8000/getToken?replId=${replId}&username=${username}`
+        `${import.meta.env.VITE_SERVER_URL}/getToken?replId=${replId}&username=${username}`
       );
 
       setToken(res1.data.token);

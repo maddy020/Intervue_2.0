@@ -2,9 +2,6 @@
   "name": "orchestration",
   "version": "1.0.0",
   "main": "index.js",
-  "scripts": {
-    "dev": "tsc -b && node dist/index.js"
-  },
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -12,6 +9,7 @@
   "dependencies": {
     "@kubernetes/client-node": "^0.21.0",
     "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
     "yaml": "^2.4.5"
   }
 }

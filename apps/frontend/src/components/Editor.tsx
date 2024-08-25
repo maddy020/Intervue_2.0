@@ -19,12 +19,13 @@ const Editor = ({
   const rootDir = useMemo(() => {
     return buildTree(files);
   }, [files]);
-
+  console.log("files", files);
   useEffect(() => {
     if (!selectedFile) {
       onSelect(rootDir.files[0]);
     }
   }, [onSelect, rootDir.files, selectedFile]);
+  console.log("rootDir", rootDir);
   return (
     <div className="flex">
       <Sidebar>

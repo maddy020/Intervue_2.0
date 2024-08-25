@@ -19,9 +19,12 @@ const Interview = ({
     localStorage.removeItem("replId");
     if (role === import.meta.env.VITE_INTERVIEWER) {
       try {
-        const res = await axios.post("http://localhost:8000/EndMeeting", {
-          replId: replId,
-        });
+        const res = await axios.post(
+          `${import.meta.env.VITE_SERVER_URL}/EndMeeting`,
+          {
+            replId: replId,
+          }
+        );
         console.log(res);
       } catch (error) {
         console.log(

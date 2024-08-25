@@ -10,7 +10,7 @@ const Page = () => {
       const user = await getUserFromClerk();
 
       axios
-        .post("http://localhost:8000/addUser", {
+        .post(`${process.env.NEXT_PUBLIC_SERVER_URL}/addUser`, {
           email: user.primaryEmailAddress?.emailAddress,
           name: user.fullName,
         })

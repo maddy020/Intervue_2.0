@@ -8,11 +8,11 @@ const requestHandler = async (job: Job) => {
     let res;
 
     if (job.data.data.role === "start") {
-      res = await axios.post("http://localhost:3002/start", {
+      res = await axios.post("http://orchestration:3002/start", {
         replId: job.data.data.replId as string,
       });
     } else if (job.data.data.role === "stop") {
-      res = await axios.post("http://localhost:3002/stop", {
+      res = await axios.post("http://orchestration:3002/stop", {
         replId: job.data.data.replId as string,
       });
     }
@@ -24,7 +24,8 @@ const requestHandler = async (job: Job) => {
 };
 const worker = new Worker("Intervue", (job: Job) => requestHandler(job), {
   connection: {
-    host: "redis.cloud.rishavrtwt.tech",
+    host: "redis",
+    port: 6379,
   },
 });
 

@@ -69,9 +69,11 @@ const handleDeleteMeeting = async (
 ) => {
   try {
     console.log("Deleting meeting with id", meetingId);
-    await axios.delete(`http://localhost:8000/deleteMeet/${meetingId}`);
+    await axios.delete(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/deleteMeet/${meetingId}`
+    );
     const res = await axios.get(
-      `http://localhost:8000/interviewsToConduct/${id}`
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/interviewsToConduct/${id}`
     );
     setAllMeet(res.data.allmeet);
   } catch (error) {

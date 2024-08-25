@@ -20,6 +20,7 @@ spec:
           image: rishavrtwt/intervue_init_service:latest
           ports:
             - containerPort: 8000
+            - containerPort: 1234
 ---
 apiVersion: v1
 kind: Service
@@ -29,9 +30,14 @@ spec:
   selector:
     app: init-service
   ports:
-    - protocol: TCP
+    - name: initserver
+      protocol: TCP
       port: 8000
       targetPort: 8000
+    - name: yjsserver
+      protocol: TCP
+      port: 1234
+      targetPort: 1234
   type: ClusterIP
 ---
 apiVersion: apps/v1
@@ -49,12 +55,12 @@ spec:
     metadata:
       labels:
         app: redis
-    spec: 
+    spec:
       containers:
         - name: redis
           image: redis
           ports:
-            - containerPort: 6379            
+            - containerPort: 6379
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -93,7 +99,7 @@ spec:
       port: 9121
       targetPort: 9121
   type: ClusterIP
----  
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -106,7 +112,7 @@ spec:
       port: 6379
       targetPort: 6379
   type: ClusterIP
----  
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -161,3 +167,10 @@ spec:
                 name: init-service
                 port:
                   number: 8000
+          - path: /yjs
+            pathType: Prefix
+            backend:
+              service:
+                name: init-service
+                port:
+                  number: 1234

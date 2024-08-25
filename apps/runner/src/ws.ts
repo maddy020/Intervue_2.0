@@ -21,6 +21,7 @@ export async function initWs(httpServer: any) {
     socket.emit("loaded", {
       rootContent: await fetchDir("/workspace", ""),
     });
+    console.log(await fetchDir("/workspace", ""));
     initHandler(socket, replId);
   });
 }
