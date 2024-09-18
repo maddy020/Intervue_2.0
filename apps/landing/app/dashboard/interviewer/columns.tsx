@@ -33,22 +33,15 @@ function MeetingLinkCell({
     const currentTime = new Date();
     const scheduledMeetingTime = new Date(dateandTime);
 
-    console.log(`Current time ${currentTime}`);
-    console.log(`Scheduled time ${scheduledMeetingTime}`);
-
     if (currentTime < scheduledMeetingTime) {
       alert("You cannot join the meeting before the scheduled date and time.");
       return;
     }
 
     if (focus === "conduct") {
-      router.replace(
-        `${process.env.NEXT_PUBLIC_CODING_URL}/coding?id=${id}&replId=${replId}&username=${username}&role=${process.env.NEXT_PUBLIC_INTERVIEWER}`
-      );
+      window.location.href = `${process.env.NEXT_PUBLIC_CODING_URL}/coding?id=${id}&replId=${replId}&username=${username}&role=${process.env.NEXT_PUBLIC_INTERVIEWER}`;
     } else if (focus === "attend") {
-      router.replace(
-        `${process.env.NEXT_PUBLIC_CODING_URL}/coding?id=${id}&replId=${replId}&username=${username}&role=${process.env.NEXT_PUBLIC_INTERVIEWEE}`
-      );
+      window.location.href = `${process.env.NEXT_PUBLIC_CODING_URL}/coding?id=${id}&replId=${replId}&username=${username}&role=${process.env.NEXT_PUBLIC_INTERVIEWEE}`;
     }
   };
 

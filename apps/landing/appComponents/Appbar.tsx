@@ -22,7 +22,7 @@ import dashboard from "./icons/dashboardImage.svg";
 const Appbar = (currentUser: { currentUser: BaseUser | undefined }) => {
   const router = useRouter();
 
-  const handleDashboard = (id: string | undefined) => {
+  const handleDashboard = (id: string) => {
     router.push(`/dashboard/interviewer/${id}`);
   };
 
@@ -59,7 +59,9 @@ const Appbar = (currentUser: { currentUser: BaseUser | undefined }) => {
               </Link>
               <Button
                 className="loginButton"
-                onClick={() => handleDashboard(currentUser.currentUser?.id)}
+                onClick={() =>
+                  handleDashboard(currentUser.currentUser?.id as string)
+                }
               >
                 Dashboard
                 <Image src={dashboard} width={22} height={22} alt="dashboard" />
@@ -101,7 +103,9 @@ const Appbar = (currentUser: { currentUser: BaseUser | undefined }) => {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   className="cursor-pointer"
-                  onClick={() => handleDashboard(currentUser.currentUser?.id)}
+                  onClick={() =>
+                    handleDashboard(currentUser.currentUser?.id as string)
+                  }
                 >
                   Dashboard
                 </DropdownMenuItem>
