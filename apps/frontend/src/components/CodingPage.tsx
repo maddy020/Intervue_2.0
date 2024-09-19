@@ -32,7 +32,7 @@ function useSocket() {
   useEffect(() => {
     try {
       const replId = localStorage.getItem("replId");
-      const newSocket = io(`ws://${replId}.interview.rishavrtwt.tech`);
+      const newSocket = io(`wss://${replId}.interview.rishavrtwt.tech`);
       setSocket(newSocket);
       return () => {
         newSocket.disconnect();
@@ -59,7 +59,7 @@ export const CodingPage = () => {
     const ValidateUser = async () => {
       try {
         const res = await axios.post(
-          `${import.meta.env.VITE_SERVER_URL}/validUser/${id}`,
+          `https://syncin.initservice.200xdevs.works/validUser/${id}`,
           {
             replId: replId,
           }
@@ -80,7 +80,7 @@ export const CodingPage = () => {
   async function solve() {
     try {
       const res1 = await axios.get(
-        `${import.meta.env.VITE_SERVER_URL}/getToken?replId=${replId}&username=${username}`
+        `https://syncin.initservice.200xdevs.works/getToken?replId=${replId}&username=${username}`
       );
 
       setToken(res1.data.token);

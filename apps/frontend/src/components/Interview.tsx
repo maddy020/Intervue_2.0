@@ -20,7 +20,7 @@ const Interview = ({
     if (role === import.meta.env.VITE_INTERVIEWER) {
       try {
         const res = await axios.post(
-          `${import.meta.env.VITE_SERVER_URL}/EndMeeting`,
+          `https://syncin.initservice.200xdevs.works/EndMeeting`,
           {
             replId: replId,
           }
@@ -33,7 +33,7 @@ const Interview = ({
         );
       }
     }
-    window.location.href = `http://localhost:3000/dashboard/interviewer/${id}`;
+    window.location.href = `${import.meta.env.VITE_LANDING_URL}/dashboard/interviewer/${id}`;
   };
 
   return (

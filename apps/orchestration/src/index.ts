@@ -89,6 +89,23 @@ app.post("/stop", async (req, res) => {
           );
           break;
         case "Ingress":
+          const { body: existingIngress } =
+            await networkingV1Api.readNamespacedIngress(
+              manifest.metadata.name,
+              namespace
+            );
+
+          // Extract the secret name from the Ingress resource
+          const tlsSecrets =
+            existingIngress?.spec?.tls?.map((tls) => tls.secretName) || [];
+
+          for (const secretName of tlsSecrets) {
+            if (secretName) {
+              // Delete the TLS secret
+              await coreV1Api.deleteNamespacedSecret(secretName, namespace);
+              console.log(`Deleted secret ${secretName}`);
+            }
+          }
           await networkingV1Api.deleteNamespacedIngress(
             manifest.metadata.name,
             namespace

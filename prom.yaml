@@ -55,6 +55,23 @@ spec:
       targetPort: 9090
   type: ClusterIP
 ---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-adapter-config
+data:
+  config.yaml: |
+    rules:
+      - seriesQuery: 'redis_memory_used_bytes'
+        resources:
+          overrides:
+            namespace:
+              resource: namespace
+        name:
+          matches: "^redis_memory_used_bytes"
+          as: "redis_memory_used"
+        metricsQuery: 'redis_memory_used_bytes{namespace!="",pod!=""}'
+---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
@@ -63,16 +80,33 @@ spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: worker 
+    name: worker
   minReplicas: 1
   maxReplicas: 10
   metrics:
     - type: Pods
       pods:
         metric:
-          name: redis  
+          name: redis_memory_used_bytes
         target:
           type: AverageValue
-          averageValue: "5" 
-
-
+          averageValue: "2000000"
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: redis-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: redis
+  minReplicas: 1
+  maxReplicas: 5
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 20

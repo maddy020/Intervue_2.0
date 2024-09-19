@@ -32,7 +32,6 @@ function MeetingLinkCell({
   ) => {
     const currentTime = new Date();
     const scheduledMeetingTime = new Date(dateandTime);
-
     if (currentTime < scheduledMeetingTime) {
       alert("You cannot join the meeting before the scheduled date and time.");
       return;
