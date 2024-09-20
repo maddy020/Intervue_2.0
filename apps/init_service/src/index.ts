@@ -148,9 +148,10 @@ app.get("/allUsers", async (req, res) => {
 
 app.post("/addUser", async (req, res) => {
   try {
-    const { email, name } = req.body;
+    const { email, name, id } = req.body;
     await prisma.user.create({
       data: {
+        id: id,
         name: name,
         email: email,
       },

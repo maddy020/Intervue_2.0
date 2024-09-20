@@ -15,18 +15,30 @@ import "../appComponents/styles/module.css";
 import Testimonials from "@/appComponents/Testimonials";
 import DocsShowcase from "@/appComponents/Docshowcase";
 export default function Home() {
-  const { isSignedIn, user } = useUser();
-  const [currentUser, setCurrentUser] = useState<BaseUser | undefined>();
-
+  const { isSignedIn, user, isLoaded } = useUser();
+  const [currentUser, setCurrentUser] = useState(null);
   useEffect(() => {
     const email = user?.primaryEmailAddress?.emailAddress;
+
     const fetchCurrentUser = async () => {
       try {
         if (isSignedIn) {
-          const res = await axios.get(
-            `${process.env.NEXT_PUBLIC_SERVER_URL}/currentUser/${email}`
-          );
-          setCurrentUser(res.data.currentUser);
+          const addUserToDatabase = async () => {
+            console.log("user from clerk", user);
+            axios
+              .post(`${process.env.NEXT_PUBLIC_SERVER_URL}/addUser`, {
+                email: user.primaryEmailAddress?.emailAddress,
+                name: user.fullName,
+                id: user.id,
+              })
+              .then(() => {
+                //@ts-ignore
+                setCurrentUser(user);
+                console.log("User added to the database");
+              })
+              .catch((err) => console.log(err));
+          };
+          addUserToDatabase();
         }
       } catch (error) {
         console.log("Error while fetching current user", error);
@@ -35,7 +47,9 @@ export default function Home() {
     fetchCurrentUser();
   }, [isSignedIn, user]);
 
-  return (
+  return !isLoaded ? (
+    <div>Loading...</div>
+  ) : (
     <>
       <Appbar currentUser={currentUser} />
       <Hero />

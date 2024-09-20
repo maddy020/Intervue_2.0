@@ -19,7 +19,7 @@ import "./styles/module.css";
 import Link from "next/link";
 import dashboard from "./icons/dashboardImage.svg";
 
-const Appbar = (currentUser: { currentUser: BaseUser | undefined }) => {
+const Appbar = (currentUser: { currentUser: BaseUser | undefined | null }) => {
   const router = useRouter();
 
   const handleDashboard = (id: string) => {

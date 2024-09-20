@@ -8,7 +8,7 @@ const Page = () => {
   useEffect(() => {
     const addUserToDatabase = async () => {
       const user = await getUserFromClerk();
-
+      console.log("user from clerk", user);
       axios
         .post(`${process.env.NEXT_PUBLIC_SERVER_URL}/addUser`, {
           email: user.primaryEmailAddress?.emailAddress,
