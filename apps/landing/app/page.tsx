@@ -24,7 +24,7 @@ export default function Home() {
       try {
         if (isSignedIn) {
           const addUserToDatabase = async () => {
-            console.log("user from clerk", user);
+            console.log("user from clerk", user.id);
             axios
               .post(`${process.env.NEXT_PUBLIC_SERVER_URL}/addUser`, {
                 email: user.primaryEmailAddress?.emailAddress,

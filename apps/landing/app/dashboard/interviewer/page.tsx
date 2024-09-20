@@ -1,13 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { columns } from "../columns";
-import { DataTable } from "../data-table";
+import { columns } from "./columns";
+import { DataTable } from "./data-table";
 import Schedule_Dialog from "@/appComponents/schedule_dialog";
 import { useUser } from "@clerk/nextjs";
 import { Meeting } from "@repo/types";
 import axios from "axios";
-import Header from "../header";
+import Header from "./header";
 import Image from "next/image";
 import pending from "@/public/pending_actions_24dp_E8EAED_FILL0_wght400_GRAD0_opsz24.svg";
 import group from "@/public/groups_24dp_00000_FILL0_wght400_GRAD0_opsz24.svg";
@@ -18,7 +18,6 @@ import keyboard from "@/public/keyboard_24dp_E8EAED_FILL0_wght400_GRAD0_opsz24.s
 import EventDone from "@/public/event_available_24dp_00000_FILL0_wght400_GRAD0_opsz24.svg";
 import WhitePending from "@/public/pending_in_white.svg";
 import WhiteGroup from "@/public/group_in_white.svg";
-import { useParams } from "next/navigation";
 
 function getRandomId() {
   const SLUG_WORKS = [
@@ -44,17 +43,32 @@ function getRandomId() {
 export default function DemoPage() {
   const [language, setLanguage] = useState("");
   const [value, setValue] = useState(getRandomId());
-  const user = useUser();
   const [allMeet, setAllMeet] = useState<Meeting[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [focus, setFocus] = useState<"conduct" | "attend" | null>(null);
-  const { id } = useParams();
+
+  const { user } = useUser();
+  useEffect(() => {
+    const addUserToDatabase = async () => {
+      axios
+        .post(`${process.env.NEXT_PUBLIC_SERVER_URL}/addUser`, {
+          email: user?.primaryEmailAddress?.emailAddress,
+          name: user?.fullName,
+          id: user?.id,
+        })
+        .then(() => console.log("User added to the database"))
+        .catch((err) => console.log(err));
+    };
+
+    addUserToDatabase();
+  }, [user]);
 
   useEffect(() => {
     const handleInterviewsToConduct = async () => {
       try {
+        if (!user) return;
         const res = await axios.get(
-          `${process.env.NEXT_PUBLIC_SERVER_URL}/interviewsToConduct/${id}`
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/interviewsToConduct/${user.id}`
         );
         setAllMeet(res.data.allmeet);
         setFocus("conduct");
@@ -65,7 +79,7 @@ export default function DemoPage() {
       }
     };
     handleInterviewsToConduct();
-  }, [id]);
+  }, [user, user?.id]);
 
   const handleInterviewsToConduct = async (id: string | string[]) => {
     try {
@@ -105,7 +119,7 @@ export default function DemoPage() {
               className={`hover:bg-black hover:text-white p-4 rounded-xl cursor-pointer flex gap-4 hover-effect ${
                 focus === "conduct" ? "bg-black text-white" : ""
               }`}
-              onClick={() => handleInterviewsToConduct(id)}
+              onClick={() => handleInterviewsToConduct(user?.id as string)}
             >
               {focus === "conduct" ? (
                 <Image
@@ -128,7 +142,7 @@ export default function DemoPage() {
               className={`hover:bg-black hover:text-white p-4 rounded-xl cursor-pointer flex gap-4 hover-effect ${
                 focus === "attend" ? "bg-black text-white" : ""
               }`}
-              onClick={() => handleInterviewsToAttend(id)}
+              onClick={() => handleInterviewsToAttend(user?.id as string)}
             >
               {focus === "attend" ? (
                 <Image
@@ -200,9 +214,9 @@ export default function DemoPage() {
             />
             <DataTable
               columns={columns(
-                user.user?.fullName as string,
+                user?.fullName as string,
                 setAllMeet,
-                id,
+                user?.id as string,
                 focus
               )}
               data={allMeet}

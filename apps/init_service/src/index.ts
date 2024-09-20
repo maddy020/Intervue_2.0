@@ -149,16 +149,40 @@ app.get("/allUsers", async (req, res) => {
 app.post("/addUser", async (req, res) => {
   try {
     const { email, name, id } = req.body;
-    await prisma.user.create({
-      data: {
-        id: id,
-        name: name,
+
+    // Validate input
+
+    const existingUser = await prisma.user.findUnique({
+      where: {
         email: email,
       },
     });
+
+    if (existingUser) {
+      return res
+        .status(409)
+        .json({ status: "Error", message: "User already exists" });
+    }
+
+    if (!email || !name || !id) {
+      return res
+        .status(400)
+        .json({ status: "Error", message: "Missing fields" });
+    }
+
+    // Create user
+    await prisma.user.create({
+      data: {
+        name: name,
+        email: email,
+        id: id,
+      },
+    });
+
     res.json({ status: "User added" });
   } catch (error) {
     console.error(error);
+    res.status(500).json({ status: "Error", message: "Internal server error" });
   }
 });
 

@@ -23,7 +23,7 @@ const Appbar = (currentUser: { currentUser: BaseUser | undefined | null }) => {
   const router = useRouter();
 
   const handleDashboard = (id: string) => {
-    router.push(`/dashboard/interviewer/${id}`);
+    router.push(`/dashboard/interviewer`);
   };
 
   return (
