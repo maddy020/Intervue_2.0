@@ -9,11 +9,12 @@ datasource db {
 }
 
 model User {
-  id             String              @id @unique
+  id             String              @id @default(uuid())
   email          String              @unique
   name           String
   meets          Meet[]              @relation("Organizer")
   participatedIn MeetsParticipants[]
+  clerkId        String              @unique
 }
 
 model Meet {

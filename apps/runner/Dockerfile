@@ -16,7 +16,7 @@ ENV PYTHON=/usr/bin/python3
 # Install dependencies, including TypeScript
 RUN npm install -g typescript 
 
-RUN npm install aws-sdk
+RUN npm install @aws-sdk/client-s3
 
 # Install dependencies
 RUN npm install

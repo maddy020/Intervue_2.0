@@ -13,7 +13,7 @@
     "@types/node": "^20.14.10"
   },
   "dependencies": {
-    "aws-sdk": "^2.1659.0",
+    "@aws-sdk/client-s3": "^3.654.0",
     "typescript": "^5.5.3"
   }
 }

@@ -175,7 +175,7 @@ app.post("/addUser", async (req, res) => {
       data: {
         name: name,
         email: email,
-        id: id,
+        clerkId: id,
       },
     });
 

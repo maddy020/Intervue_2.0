@@ -7,9 +7,9 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.654.0",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
-    "aws-sdk": "^2.1665.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
