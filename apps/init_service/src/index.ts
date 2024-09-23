@@ -151,8 +151,6 @@ app.post("/addUser", async (req, res) => {
   try {
     const { email, name } = req.body;
 
-    // Validate input
-
     if (!email || !name) {
       return res
         .status(400)
@@ -165,14 +163,12 @@ app.post("/addUser", async (req, res) => {
     });
 
     if (existingUser) {
-      return res.status(409).json({
-        status: "Error",
+      return res.json({
+        status: "User already exists",
         currUser: existingUser,
-        message: "Already Exists",
       });
     }
 
-    // Create user
     const currUser = await prisma.user.create({
       data: {
         name: name,
@@ -180,7 +176,9 @@ app.post("/addUser", async (req, res) => {
       },
     });
 
-    res.json({ status: "User added", currUser });
+    console.log("User added", currUser);
+
+    res.json({ status: "User added", currUser: currUser });
   } catch (error) {
     console.error(error);
     res.status(500).json({ status: "Error", message: "Internal server error" });

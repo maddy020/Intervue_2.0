@@ -11,7 +11,6 @@ import {
 
 import Logo from "../appComponents/icons/Logo";
 import { Menu } from "lucide-react";
-import { BaseUser } from "@repo/types";
 import { useRouter } from "next/navigation";
 import loginIcon from "./icons/clerk.jpg";
 import Image from "next/image";
@@ -19,10 +18,10 @@ import "./styles/module.css";
 import Link from "next/link";
 import dashboard from "./icons/dashboardImage.svg";
 
-const Appbar = (currentUser: { currentUser: BaseUser | undefined | null }) => {
+const Appbar = () => {
   const router = useRouter();
 
-  const handleDashboard = (id: string) => {
+  const handleDashboard = () => {
     router.push(`/dashboard/interviewer`);
   };
 
@@ -57,12 +56,7 @@ const Appbar = (currentUser: { currentUser: BaseUser | undefined | null }) => {
               >
                 Company
               </Link>
-              <Button
-                className="loginButton"
-                onClick={() =>
-                  handleDashboard(currentUser.currentUser?.id as string)
-                }
-              >
+              <Button className="loginButton" onClick={handleDashboard}>
                 Dashboard
                 <Image src={dashboard} width={22} height={22} alt="dashboard" />
               </Button>
@@ -103,9 +97,7 @@ const Appbar = (currentUser: { currentUser: BaseUser | undefined | null }) => {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   className="cursor-pointer"
-                  onClick={() =>
-                    handleDashboard(currentUser.currentUser?.id as string)
-                  }
+                  onClick={handleDashboard}
                 >
                   Dashboard
                 </DropdownMenuItem>
