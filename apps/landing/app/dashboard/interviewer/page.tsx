@@ -5,7 +5,7 @@ import { columns } from "./columns";
 import { DataTable } from "./data-table";
 import Schedule_Dialog from "@/appComponents/schedule_dialog";
 import { useUser } from "@clerk/nextjs";
-import { Meeting } from "@repo/types";
+import { BaseUser, Meeting } from "@repo/types";
 import axios from "axios";
 import Header from "./header";
 import Image from "next/image";
@@ -46,20 +46,20 @@ export default function DemoPage() {
   const [allMeet, setAllMeet] = useState<Meeting[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [focus, setFocus] = useState<"conduct" | "attend" | null>(null);
-
+  const [currentUser, setCurrentUser] = useState<BaseUser | null>(null);
   const { user } = useUser();
   useEffect(() => {
     const addUserToDatabase = async () => {
-      axios
-        .post(`${process.env.NEXT_PUBLIC_SERVER_URL}/addUser`, {
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/addUser`,
+        {
           email: user?.primaryEmailAddress?.emailAddress,
           name: user?.fullName,
-          id: user?.id,
-        })
-        .then(() => console.log("User added to the database"))
-        .catch((err) => console.log(err));
-    };
+        }
+      );
 
+      setCurrentUser(res.data.currUser);
+    };
     addUserToDatabase();
   }, [user]);
 
@@ -68,7 +68,7 @@ export default function DemoPage() {
       try {
         if (!user) return;
         const res = await axios.get(
-          `${process.env.NEXT_PUBLIC_SERVER_URL}/interviewsToConduct/${user.id}`
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/interviewsToConduct/${currentUser?.id}`
         );
         setAllMeet(res.data.allmeet);
         setFocus("conduct");
@@ -79,7 +79,7 @@ export default function DemoPage() {
       }
     };
     handleInterviewsToConduct();
-  }, [user, user?.id]);
+  }, [user, user?.id, currentUser?.id]);
 
   const handleInterviewsToConduct = async (id: string | string[]) => {
     try {
@@ -119,7 +119,9 @@ export default function DemoPage() {
               className={`hover:bg-black hover:text-white p-4 rounded-xl cursor-pointer flex gap-4 hover-effect ${
                 focus === "conduct" ? "bg-black text-white" : ""
               }`}
-              onClick={() => handleInterviewsToConduct(user?.id as string)}
+              onClick={() =>
+                handleInterviewsToConduct(currentUser?.id as string)
+              }
             >
               {focus === "conduct" ? (
                 <Image
@@ -142,7 +144,9 @@ export default function DemoPage() {
               className={`hover:bg-black hover:text-white p-4 rounded-xl cursor-pointer flex gap-4 hover-effect ${
                 focus === "attend" ? "bg-black text-white" : ""
               }`}
-              onClick={() => handleInterviewsToAttend(user?.id as string)}
+              onClick={() =>
+                handleInterviewsToAttend(currentUser?.id as string)
+              }
             >
               {focus === "attend" ? (
                 <Image

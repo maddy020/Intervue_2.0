@@ -109,7 +109,7 @@ app.post("/schedulemeet", async (req, res) => {
       }
     );
     const p = participants.map((participant: BaseUser) => ({
-      userId: participant.clerkId,
+      userId: participant.id,
     }));
     const newMeet = await prisma.meet.create({
       data: {
@@ -149,10 +149,15 @@ app.get("/allUsers", async (req, res) => {
 
 app.post("/addUser", async (req, res) => {
   try {
-    const { email, name, id } = req.body;
+    const { email, name } = req.body;
 
     // Validate input
 
+    if (!email || !name) {
+      return res
+        .status(400)
+        .json({ status: "Error", message: "Missing fields" });
+    }
     const existingUser = await prisma.user.findUnique({
       where: {
         email: email,
@@ -160,27 +165,22 @@ app.post("/addUser", async (req, res) => {
     });
 
     if (existingUser) {
-      return res
-        .status(409)
-        .json({ status: "Error", message: "User already exists" });
-    }
-
-    if (!email || !name || !id) {
-      return res
-        .status(400)
-        .json({ status: "Error", message: "Missing fields" });
+      return res.status(409).json({
+        status: "Error",
+        currUser: existingUser,
+        message: "Already Exists",
+      });
     }
 
     // Create user
-    await prisma.user.create({
+    const currUser = await prisma.user.create({
       data: {
         name: name,
         email: email,
-        clerkId: id,
       },
     });
 
-    res.json({ status: "User added" });
+    res.json({ status: "User added", currUser });
   } catch (error) {
     console.error(error);
     res.status(500).json({ status: "Error", message: "Internal server error" });

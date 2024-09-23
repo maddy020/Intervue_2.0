@@ -49,7 +49,6 @@ export interface BaseUser {
   id: string;
   name: string;
   email: string;
-  clerkId: string;
 }
 
 export interface ExtendedUser extends BaseUser {

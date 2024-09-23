@@ -14,13 +14,12 @@ model User {
   name           String
   meets          Meet[]              @relation("Organizer")
   participatedIn MeetsParticipants[]
-  clerkId        String              @unique
 }
 
 model Meet {
   id           String              @id @default(uuid())
   userId       String
-  Interviewer  User                @relation("Organizer", fields: [userId], references: [clerkId])
+  Interviewer  User                @relation("Organizer", fields: [userId], references: [id])
   status       String
   dateandTime  DateTime
   roomId       String
@@ -32,7 +31,7 @@ model MeetsParticipants {
   userId String
 
   meet Meet @relation(fields: [meetId], references: [id])
-  user User @relation(fields: [userId], references: [clerkId])
+  user User @relation(fields: [userId], references: [id])
 
   @@id([meetId, userId]) // Composite primary key
 }
