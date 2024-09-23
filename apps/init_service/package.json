@@ -4,9 +4,6 @@
   "main": "index.js",
   "scripts": {
     "build": "esbuild src/index.ts --platform=node --bundle --outdir=dist",
-    "yjs": "HOST=localhost PORT=1234 npx y-websocket",
-    "start-backend": "node dist/index.js",
-    "dev": "npm run build && concurrently \"npm run start-backend\" \"npm run yjs\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
