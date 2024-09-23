@@ -220,7 +220,7 @@ export default function DemoPage() {
               columns={columns(
                 user?.fullName as string,
                 setAllMeet,
-                user?.id as string,
+                currentUser?.id as string,
                 focus
               )}
               data={allMeet}

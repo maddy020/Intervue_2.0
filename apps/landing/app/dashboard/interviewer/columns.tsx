@@ -24,7 +24,6 @@ function MeetingLinkCell({
   focus: "conduct" | "attend" | null;
   id: string | string[];
 }) {
-  const router = useRouter();
   const handleMeetingJoin = async (
     replId: string,
     dateandTime: string,
