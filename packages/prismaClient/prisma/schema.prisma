@@ -5,7 +5,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = "postgres://avnadmin:AVNS_k64Y167-4jkKkgAFYKy@pg-593f99d-intervue.i.aivencloud.com:28678/defaultdb?sslmode=require"
 }
 
 model User {
@@ -20,7 +20,7 @@ model User {
 model Meet {
   id           String              @id @default(uuid())
   userId       String
-  Interviewer  User                @relation("Organizer", fields: [userId], references: [id])
+  Interviewer  User                @relation("Organizer", fields: [userId], references: [clerkId])
   status       String
   dateandTime  DateTime
   roomId       String
@@ -32,7 +32,7 @@ model MeetsParticipants {
   userId String
 
   meet Meet @relation(fields: [meetId], references: [id])
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [clerkId])
 
   @@id([meetId, userId]) // Composite primary key
 }

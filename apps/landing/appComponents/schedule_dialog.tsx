@@ -97,6 +97,7 @@ const Schedule_Dialog = ({
             id: loggedUser?.id,
             email: loggedUser?.email,
             name: loggedUser?.name,
+            clerkId: loggedUser?.clerkId,
           },
           scheduleTime: time,
           participants: [...selectedParticipants, loggedUser],

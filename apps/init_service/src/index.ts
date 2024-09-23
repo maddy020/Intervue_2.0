@@ -6,6 +6,7 @@ import { AccessToken } from "livekit-server-sdk";
 import { Queue } from "bullmq";
 import prisma from "@repo/prismaclient";
 import axios from "axios";
+import { BaseUser } from "@repo/types";
 
 const app = express();
 const queue = new Queue("Intervue", {
@@ -107,8 +108,8 @@ app.post("/schedulemeet", async (req, res) => {
         jobId: replId,
       }
     );
-    const p = participants.map((participant: { id: string }) => ({
-      userId: participant.id,
+    const p = participants.map((participant: BaseUser) => ({
+      userId: participant.clerkId,
     }));
     const newMeet = await prisma.meet.create({
       data: {
