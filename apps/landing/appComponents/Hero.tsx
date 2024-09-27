@@ -5,6 +5,7 @@ import user from "./icons/3d-casual-life-boy-with-laptop-sitting-on-floor.png";
 import meet from "./icons/casual-life-3d-boy-studying-remotely-with-tutor.png";
 import { useRouter } from "next/navigation";
 import loginIcon from "./icons/clerk.jpg";
+import { SignedOut } from "@clerk/nextjs";
 
 const Hero = () => {
   const router = useRouter();
@@ -38,15 +39,17 @@ const Hero = () => {
           </p>
         </div>
         <div className="flex items-center justify-center HiringButton">
-          <Button
-            className="pl-2 py-6 SignupButton"
-            onClick={() => {
-              router.push("/sign-up");
-            }}
-          >
-            <Image src={loginIcon} width={26} height={26} alt="login Icon" />
-            Sign up with Clerk
-          </Button>
+          <SignedOut>
+            <Button
+              className="pl-2 py-6 SignupButton"
+              onClick={() => {
+                router.push("/sign-up");
+              }}
+            >
+              <Image src={loginIcon} width={26} height={26} alt="login Icon" />
+              Sign up with Clerk
+            </Button>
+          </SignedOut>
         </div>
       </div>
     </section>

@@ -9,7 +9,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import Logo from "../appComponents/icons/Logo";
 import { Menu } from "lucide-react";
 import { useRouter } from "next/navigation";
 import loginIcon from "./icons/clerk.jpg";
@@ -17,6 +16,8 @@ import Image from "next/image";
 import "./styles/module.css";
 import Link from "next/link";
 import dashboard from "./icons/dashboardImage.svg";
+import logo from "./icons/logo.svg";
+import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 
 const Appbar = () => {
   const router = useRouter();
@@ -29,7 +30,17 @@ const Appbar = () => {
     <div className="appbar py-4 border-b">
       <div className="px-4 appbar-first">
         <div className="flex justify-between items-center appbar-second">
-          <Logo />
+          <Image
+            style={{
+              border: "1px solid lightgrey",
+              padding: "4px",
+              borderRadius: "12%",
+            }}
+            src={logo}
+            width={40}
+            height={40}
+            alt="logo"
+          />
           <div className="navDiv">
             <nav className="flex items-center">
               <Link
@@ -60,6 +71,58 @@ const Appbar = () => {
                 Dashboard
                 <Image src={dashboard} width={22} height={22} alt="dashboard" />
               </Button>
+              <SignedIn>
+                <UserButton
+                  appearance={{
+                    elements: {
+                      userButtonAvatarBox: {
+                        width: "45px",
+                        height: "45px",
+                      },
+                      userButtonOuterBox: {
+                        width: "50px",
+                        height: "50px",
+                      },
+                    },
+                  }}
+                />
+              </SignedIn>
+              <SignedOut>
+                <Button
+                  className="loginButton"
+                  onClick={() => {
+                    router.push("/sign-in");
+                  }}
+                >
+                  Login
+                  <Image
+                    src={loginIcon}
+                    width={26}
+                    height={26}
+                    alt="login Icon"
+                  />
+                </Button>
+              </SignedOut>
+            </nav>
+          </div>
+          <div className="hamburger">
+            <SignedIn>
+              <UserButton
+                appearance={{
+                  elements: {
+                    userButtonAvatarBox: {
+                      width: "45px",
+                      height: "45px",
+                    },
+                    userButtonOuterBox: {
+                      width: "50px",
+                      height: "50px",
+                    },
+                  },
+                }}
+              />
+            </SignedIn>
+            <SignedOut>
               <Button
                 className="loginButton"
                 onClick={() => {
@@ -74,18 +137,7 @@ const Appbar = () => {
                   alt="login Icon"
                 />
               </Button>
-            </nav>
-          </div>
-          <div className="hamburger">
-            <Button
-              className="loginButton"
-              onClick={() => {
-                router.push("/sign-in");
-              }}
-            >
-              Login
-              <Image src={loginIcon} width={26} height={26} alt="login Icon" />
-            </Button>
+            </SignedOut>
             <DropdownMenu>
               <DropdownMenuTrigger>
                 <span className="md:hidden">
