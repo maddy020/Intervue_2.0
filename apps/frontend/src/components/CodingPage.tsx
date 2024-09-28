@@ -95,7 +95,7 @@ export const CodingPage = () => {
       setPodCreated(true);
     }
     solve();
-    return <CodingComp token={token} role={role} id={id} replId={replId} />;
+    return <CodingComp token={token} role={role} replId={replId} />;
   }
 
   if (!podCreated) {
@@ -120,12 +120,10 @@ export const CodingPage = () => {
 export const CodingComp = ({
   token,
   role,
-  id,
   replId,
 }: {
   token: string;
   role: string;
-  id: string;
   replId: string;
 }) => {
   const socket = useSocket();
@@ -303,7 +301,6 @@ export const CodingComp = ({
               <Interview
                 token={token}
                 className={"h-[42dvh] w-[38dvw]"}
-                id={id}
                 replId={replId}
                 role={role}
               />
@@ -315,7 +312,6 @@ export const CodingComp = ({
           <Interview
             token={token}
             className={"h-screen w-screen"}
-            id={id}
             replId={replId}
             role={role}
           />

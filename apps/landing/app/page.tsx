@@ -10,11 +10,13 @@ import CtaFooter from "@/appComponents/CtaFooter";
 import "../appComponents/styles/module.css";
 import Testimonials from "@/appComponents/Testimonials";
 import DocsShowcase from "@/appComponents/Docshowcase";
+import DemoVideo from "@/appComponents/DemoVideo";
 export default function Home() {
   return (
     <>
       <Appbar />
       <Hero />
+      <DemoVideo />
       <HeroImage />
       <LogoTicker />
       <Feature />

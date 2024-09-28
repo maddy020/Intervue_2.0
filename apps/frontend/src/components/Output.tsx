@@ -3,7 +3,7 @@ import { useSearchParams } from "react-router-dom";
 export const Output = () => {
   const [searchParams] = useSearchParams();
   const replId = searchParams.get("replId") ?? "";
-  const INSTANCE_URI = `http://${replId}.output.rishavrtwt.tech`;
+  const INSTANCE_URI = `https://${replId}.output.rishavrtwt.tech`;
 
   return (
     <div style={{ height: "36vh", background: "white" }}>

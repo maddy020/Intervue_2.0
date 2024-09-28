@@ -59,7 +59,7 @@ const Code = ({
     const doc = new Y.Doc();
 
     const provider: WebsocketProvider = new WebsocketProvider(
-      "wss://syncin.initservice.200xdevs.works/yjs",
+      "wss://syncin.liveshare.200xdevs.works",
       "my-roomname",
       doc
     );

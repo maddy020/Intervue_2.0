@@ -5,13 +5,11 @@ import axios from "axios";
 const Interview = ({
   token,
   className,
-  id,
   replId,
   role,
 }: {
   token: string;
   className?: string;
-  id: string;
   replId: string;
   role: string;
 }) => {
@@ -33,7 +31,7 @@ const Interview = ({
         );
       }
     }
-    window.location.href = `${import.meta.env.VITE_LANDING_URL}/dashboard/interviewer/${id}`;
+    window.location.href = `${import.meta.env.VITE_LANDING_URL}/dashboard/interviewer/`;
   };
 
   return (

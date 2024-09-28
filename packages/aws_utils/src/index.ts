@@ -7,10 +7,10 @@ import {
 
 const s3 = new S3Client({
   credentials: {
-    accessKeyId: "AKIAXYKJQWSEZNY6XHZX",
-    secretAccessKey: "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",
+    accessKeyId: "AKIAQ3EGVTA44APQ4GEM",
+    secretAccessKey: "qoonLVGOVsGIinlrV5pt9zyXGIwvSPxuTo1caw3E",
   },
-  region: "your-region", // specify the region here
+  region: "ap-south-1", // specify the region here
 });
 
 export async function copyS3Folder(
@@ -20,7 +20,7 @@ export async function copyS3Folder(
 ): Promise<void> {
   try {
     const listParams = {
-      Bucket: "madhav.dev.intervue",
+      Bucket: "rishav.dev.intervue",
       Prefix: sourcePrefix,
       ContinuationToken: continuationToken,
     };
@@ -37,8 +37,8 @@ export async function copyS3Folder(
           destinationPrefix
         );
         const copyParams = {
-          Bucket: "madhav.dev.intervue",
-          CopySource: `madhav.dev.intervue/${object.Key}`,
+          Bucket: "rishav.dev.intervue",
+          CopySource: `rishav.dev.intervue/${object.Key}`,
           Key: destinationKey,
         };
         await s3.send(new CopyObjectCommand(copyParams));
@@ -63,7 +63,7 @@ export const saveToS3 = async (
   content: string
 ): Promise<void> => {
   const params = {
-    Bucket: process.env.S3_BUCKET ?? "",
+    Bucket: "rishav.dev.intervue",
     Key: `${key}${filePath}`,
     Body: content,
   };

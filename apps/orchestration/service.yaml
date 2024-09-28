@@ -23,13 +23,13 @@ spec:
           command: ["/bin/sh", "-c"]
           args:
             - >
-              aws s3 cp s3://madhav.dev.intervue/code/service_name /workspace/ --recursive &&
+              aws s3 cp s3://rishav.dev.intervue/code/service_name /workspace/ --recursive &&
               echo "Resources copied from S3";
           env:
             - name: AWS_ACCESS_KEY_ID
-              value: "AKIAXYKJQWSEZNY6XHZX"
+              value: "AKIAQ3EGVTA44APQ4GEM"
             - name: AWS_SECRET_ACCESS_KEY
-              value: "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"
+              value: "qoonLVGOVsGIinlrV5pt9zyXGIwvSPxuTo1caw3E"
           volumeMounts:
             - name: workspace-volume
               mountPath: /workspace
@@ -75,6 +75,7 @@ spec:
   tls:
     - hosts:
         - service_name.interview.rishavrtwt.tech
+        - service_name.output.rishavrtwt.tech
       secretName: service_name
   rules:
     - host: service_name.interview.rishavrtwt.tech
